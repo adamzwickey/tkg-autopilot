@@ -1,0 +1,72 @@
+{
+    "EbsOptimized": false,
+    "IamInstanceProfile": {
+        "Arn": "arn:aws:iam::784238359218:instance-profile/controllers.tkg.cloud.vmware.com"
+    },
+    "BlockDeviceMappings": [
+        {
+            "DeviceName": "/dev/xvda",
+            "Ebs": {
+                "Encrypted": false,
+                "DeleteOnTermination": true,
+                "SnapshotId": "snap-05741358b44a33b45",
+                "VolumeSize": 30,
+                "VolumeType": "gp2"
+            }
+        }
+    ],
+    "NetworkInterfaces": [
+        {
+            "AssociatePublicIpAddress": true,
+            "DeleteOnTermination": true,
+            "Description": "Primary network interface",
+            "DeviceIndex": 0,
+            "Groups": [
+                "sg-06c9329770e185e9b"
+            ],
+            "InterfaceType": "interface",
+            "Ipv6Addresses": [],
+            "PrivateIpAddresses": [],
+            "SubnetId": "subnet-05e36314678bcfa72" 
+        }
+    ],
+    "ImageId": "ami-03657b56516ab7912",
+    "InstanceType": "t2.medium",
+    "KeyName": "tkg-tkg-aws-default", 
+    "Monitoring": {
+        "Enabled": false
+    },
+    "Placement": {
+        "AvailabilityZone": "us-east-2a",
+        "GroupName": "",
+        "Tenancy": "default"
+    },
+    "DisableApiTermination": false,
+    "InstanceInitiatedShutdownBehavior": "stop",
+    "UserData": "IyEvdXNyL2Jpbi9lbnYgYmFzaAoKZWNobyAiKioqKioqKioqKioqKioqKioqKioqKioiCmVjaG8gIlByZXBhcmluZyBwcmUtcmVxIHRvb2xzIgplY2hvICIqKioqKioqKioqKioqKioqKioqKioqKiIKIyBEb2NrZXIgaW5zdGFsbApzdWRvIHl1bSB1cGRhdGUgLXkKc3VkbyBhbWF6b24tbGludXgtZXh0cmFzIGluc3RhbGwgZG9ja2VyIC15CnN1ZG8gc2VydmljZSBkb2NrZXIgc3RhcnQKc3VkbyB1c2VybW9kIC1hIC1HIGRvY2tlciBlYzItdXNlcgpzdWRvIGRvY2tlciBpbmZvCgojIGt1YmVjdGwgaW5zdGFsbApjdXJsIC1MTyAiaHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL2t1YmVybmV0ZXMtcmVsZWFzZS9yZWxlYXNlLyQoY3VybCAtcyBodHRwczovL3N0b3JhZ2UuZ29vZ2xlYXBpcy5jb20va3ViZXJuZXRlcy1yZWxlYXNlL3JlbGVhc2Uvc3RhYmxlLnR4dCkvYmluL2xpbnV4L2FtZDY0L2t1YmVjdGwiCmNobW9kIHUreCBrdWJlY3RsCnN1ZG8gbXYga3ViZWN0bCAvdXNyL3NiaW4KCiMgR2l0IGNsaWVudCBpbnN0YWxsCnN1ZG8geXVtIGluc3RhbGwgZ2l0IC15CmdpdCB2ZXJzaW9uCgplY2hvICJEb25lIHdpdGggcHJlLXJlcXMiCgplY2hvICIqKioqKioqKioqKioqKioqKioqKioqKiIKZWNobyAiQ2xvbmluZyBib290c3RyYXAgc2NyaXB0cyIKZWNobyAiKioqKioqKioqKioqKioqKioqKioqKioiCiMgcHVsbCByZXBvCiMgcHVsbCBpbnN0YWxsIGRvd24gYXJ0aWZhY3RzCiMgcnVuIHNjcmlwdAoK",  
+    "TagSpecifications": [
+        {
+            "ResourceType": "instance",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "TKG Bootstrapper"
+                }
+            ]
+        }
+    ],
+    "CreditSpecification": {
+        "CpuCredits": "standard"
+    },
+    "CapacityReservationSpecification": {
+        "CapacityReservationPreference": "open"
+    },
+    "HibernationOptions": {
+        "Configured": false
+    },
+    "MetadataOptions": {
+        "HttpTokens": "optional",
+        "HttpPutResponseHopLimit": 1,
+        "HttpEndpoint": "enabled"
+    }
+}
