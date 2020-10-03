@@ -5,7 +5,7 @@ PARAMS_YAML=vars.yaml
 #Prepare AWS template
 INSTANCE_PROFILE=$(yq r $PARAMS_YAML aws.instanceProfileARN)
 SECURITY_GROUP=$(yq r $PARAMS_YAML aws.securityGroup)
-SUBNET=$(yq r $PARAMS_YAML aws.publicSubnet)
+SUBNET=$(yq r $PARAMS_YAML aws.publicSubnet1)
 KEYNAME=$(yq r $PARAMS_YAML aws.keyPairName)
 USER_DATA=$(cat scripts/init.sh | base64 )
 sed -e 's|INSTANCE_PROFILE|'$INSTANCE_PROFILE'|g' \

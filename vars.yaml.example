@@ -1,5 +1,16 @@
 aws:
   instanceProfileARN: arn:aws:iam::784238359218:instance-profile/controllers.tkg.cloud.vmware.com
   securityGroup: sg-06c9329770e185e9b
-  publicSubnet: subnet-05e36314678bcfa72
   keyPairName: tkg-tkg-aws-default
+  vpcId: vpc-07677aca311470455
+  publicSubnet1: subnet-05e36314678bcfa72 
+  publicSubnet2: subnet-097a3feff692b9c5e
+  publicSubnet3: subnet-02dcfd6a721f54373
+  privateSubnet1: subnet-01504f4f789892d81
+  privateSubnet2: subnet-007b3cc4c90e0a4ac
+  privateSubnet3: subnet-0cd72913ed8084dc4
+tkg:
+  mgmt:
+    plan: dev
+  workload1:
+    plan: dev
