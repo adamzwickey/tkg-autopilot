@@ -35,5 +35,6 @@ echo "***********************"
 git clone https://gitlab.com/azwickey/tkg-autopilot.git
 # run script
 cd tkg-autopilot/
-./scripts/bootstrap.sh
+export HOME=/tkg-autopilot
+source ./scripts/bootstrap.sh
 
