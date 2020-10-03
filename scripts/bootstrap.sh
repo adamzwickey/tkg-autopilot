@@ -46,5 +46,5 @@ yq write $HOME/.tkg/config.yaml -i "AWS_REGION" us-east-2
 cat $HOME/.tkg/config.yaml
 
 MGMT_PLAN=$(yq r $VARS_YAML tkg.mgmt.plan)
-# tkg init -i aws -p $MGMT_PLAN --ceip-participation false --name aws-mgmt --cni antrea -v 8
+tkg init -i aws -p $MGMT_PLAN --ceip-participation false --name aws-mgmt --cni antrea -v 8
 
