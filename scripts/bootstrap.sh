@@ -22,7 +22,6 @@ mv tkg/ytt-linux-* /usr/bin/ytt
 tar -zxvf tkg-extensions-manifests-*
 
 # Initialize TKG
-echo $HOME
 tkg get mc
 # Write needed values into TKG config file
 yq write $HOME/.tkg/config.yaml -i "SERVICE_CIDR" 100.64.0.0/13
