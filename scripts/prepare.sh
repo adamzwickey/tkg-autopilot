@@ -22,6 +22,8 @@ TEMPLATE_YAML=$(aws ec2 create-launch-template \
     --launch-template-data file://custom-template.json \
     --output yaml)
 echo $TEMPLATE_YAML > lt.yaml
+echo "Launch Template: $(cat lt.yaml)"
 LT_ID=$(yq r lt.yaml LaunchTemplate.LaunchTemplateId)
 EC2_INSTANCE_YAML=$(aws ec2 run-instances --launch-template LaunchTemplateId=$LT_ID,Version=1 --output yaml)
-echo $EC2_INSTANCE_YAML
+echo $EC2_INSTANCE_YAML > ec2.yaml
+echo "Bootstrapper Instance: $(cat ec2.yaml)"
