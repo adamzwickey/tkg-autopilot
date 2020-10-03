@@ -1,0 +1,5 @@
+aws:
+  instanceProfileARN: arn:aws:iam::784238359218:instance-profile/controllers.tkg.cloud.vmware.com
+  securityGroup: sg-06c9329770e185e9b
+  publicSubnet: subnet-05e36314678bcfa72
+  keyPairName: tkg-tkg-aws-default
