@@ -16,6 +16,12 @@ chmod u+x kubectl
 chmod o+x kubectl
 sudo mv kubectl /usr/bin
 
+# Helm
+wget https://get.helm.sh/helm-v3.3.4-linux-amd64.tar.gz
+tar -zxvf helm*
+mv linux-amd64/helm /usr/bin/helm
+rm -rf linux*
+
 # Git client install
 sudo yum install git -y
 git version
