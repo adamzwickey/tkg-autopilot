@@ -54,8 +54,29 @@ cat $HOME/.tkg/config.yaml
 MGMT_PLAN=$(yq r $VARS_YAML tkg.mgmt.plan)
 tkg init -i aws -p $MGMT_PLAN --ceip-participation false --name $(yq r $VARS_YAML tkg.mgmt.name) --cni antrea -v 8
 
+cd /tkg-autopilot
+kubectl apply -f manifests/mgmt/cluster-issuer.yaml
 # Install Ingress
+kubectl apply -f assets/tkg-extensions-manifests/extensions/tmc-extension-manager.yaml
+kubectl apply -f assets/tkg-extensions-manifests/extensions/kapp-controller.yaml
+kubectl apply -f assets/tkg-extensions-manifests/extensions/ingress/contour/namespace-role.yaml
+kubectl create secret generic contour-data-values --from-file=values.yaml=manifests/mgmt/contour-data-values.yaml -n tanzu-system-ingress
 
 # Install Exernal DNS
+yq write manifests/mgmt/values-external-dns.yaml -i "aws.credentials.secretKey" $(yq r $VARS_YAML aws.accessKey)
+yq write manifests/mgmt/values-external-dns.yaml -i "aws.credentials.accessKey" $(yq r $VARS_YAML aws.secretKey)
+yq write manifests/mgmt/values-external-dns.yaml -i "aws.region" $(yq r $VARS_YAML aws.region)
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm upgrade --install external-dns bitnami/external-dns -n tanzu-system-ingress -f manifests/mgmt/values-external-dns.yaml
+#Wait for pod to be ready
+while kubectl get po -l app.kubernetes.io/name=external-dns -n tanzu-system-ingress | grep Running ; [ $? -ne 0 ]; do
+	echo external-dns is not yet ready
+	sleep 5s
+done
+kubectl annotate service envoy "external-dns.alpha.kubernetes.io/hostname=$(yq r $VARS_YAML tkg.mgmt.ingress)." -n tanzu-system-ingress --overwrite
 
 # Install ArgoCD
+kubectl create ns argocd
+helm repo add argo https://argoproj.github.io/argo-helm
+helm install argocd argo/argo-cd -f manifests/mgmt/values-argo.yaml  -n argocd
+kubectl apply -f generated/$(yq r $PARAMS_YAML shared-services-cluster.name)/argocd/httpproxy.yaml
