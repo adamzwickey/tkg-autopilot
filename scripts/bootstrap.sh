@@ -50,7 +50,7 @@ yq write $HOME/.tkg/config.yaml -i "BASTION_HOST_ENABLED" false
 cat $HOME/.tkg/config.yaml
 
 MGMT_PLAN=$(yq r $VARS_YAML tkg.mgmt.plan)
-tkg init -i aws -p $MGMT_PLAN --ceip-participation false --name aws-mgmt --cni antrea -v 8
+tkg init -i aws -p $MGMT_PLAN --ceip-participation false --name $(yq r $VARS_YAML tkg.mgmt.name) --cni antrea -v 8
 
 # Install Exernal DNS
 
