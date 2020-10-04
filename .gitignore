@@ -1,4 +1,5 @@
 vars.yaml
 lt.yaml
 ec2.yaml
+custom-template.json
 keys/
