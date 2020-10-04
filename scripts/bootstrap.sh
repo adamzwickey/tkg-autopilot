@@ -27,6 +27,7 @@ tkg get mc
 export AWS_B64ENCODED_CREDENTIALS=
 export AWS_ACCESS_KEY_ID=$(yq r $VARS_YAML aws.accessKey)
 export AWS_SECRET_ACCESS_KEY=$(yq r $VARS_YAML aws.secretKey)
+export AWS_REGION=$(yq r $VARS_YAML aws.region)
 tkg config permissions aws
 
 yq write $HOME/.tkg/config.yaml -i "SERVICE_CIDR" 100.64.0.0/13
