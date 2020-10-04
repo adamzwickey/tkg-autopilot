@@ -53,8 +53,8 @@ cat $HOME/.tkg/config.yaml
 MGMT_PLAN=$(yq r $VARS_YAML tkg.mgmt.plan)
 tkg init -i aws -p $MGMT_PLAN --ceip-participation false --name $(yq r $VARS_YAML tkg.mgmt.name) --cni antrea -v 8
 
-# Install Exernal DNS
-
 # Install Ingress
+
+# Install Exernal DNS
 
 # Install ArgoCD

@@ -1,4 +1,10 @@
 aws:
+  accessKey: xxxxx
+  secretKey: xxxxxxxx
+  region: us-east-2
+  az1: us-east-2a
+  az2: us-east-2b
+  az3: us-east-2c
   instanceProfileARN: arn:aws:iam::784238359218:instance-profile/controllers.tkg.cloud.vmware.com
   securityGroup: sg-06c9329770e185e9b
   keyPairName: tkg-tkg-aws-default
@@ -12,5 +18,9 @@ aws:
 tkg:
   mgmt:
     plan: dev
+    name: mgmt
+    ingress: "*.mgmt.tanzu.zwickey.net"
   workload1:
     plan: dev
+    name: w1
+    ingress: "*.w1.tanzu.zwickey.net"
