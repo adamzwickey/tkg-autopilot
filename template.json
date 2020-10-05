@@ -31,7 +31,7 @@
         }
     ],
     "ImageId": "ami-03657b56516ab7912",
-    "InstanceType": "t2.medium",
+    "InstanceType": "t3.medium",
     "KeyName": "KEYNAME",
     "Monitoring": {
         "Enabled": false
