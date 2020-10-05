@@ -70,11 +70,11 @@ kubectl apply -f assets/tkg-extensions-manifests/extensions/ingress/contour/cont
 
 # Install Exernal DNS
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helm upgrade --install external-dns-aws bitnami/external-dns \
---set hostedzone=$(yq r $VARS_YAML aws.hostedZoneId) \ 
---set AWS_ACCESS_KEY_ID=$(echo -n $(yq r $VARS_YAML aws.accessKey) | base64) \
---set AWS_SECRET_ACCESS_KEY=$(echo -n $(yq r $VARS_YAML aws.secretKey) | base64) \
---set iaas=aws -n tanzu-system-ingress
+yq write manifests/mgmt/values-external-dns.yaml -i "aws.credentials.secretKey" $(yq r $VARS_YAML aws.secretKey)
+yq write manifests/mgmt/values-external-dns.yaml -i "aws.credentials.accessKey" $(yq r $VARS_YAML aws.accessKey)
+yq write manifests/mgmt/values-external-dns.yaml -i "aws.region" $(yq r $VARS_YAML aws.region)
+yq write manifests/mgmt/values-external-dns.yaml -i "txtOwnerId" $(yq r $VARS_YAML aws.hostedZoneId)
+helm install external-dns-aws bitnami/external-dns -n tanzu-system-ingress -f manifests/mgmt/values-external-dns.yaml
 #Wait for pod to be ready
 while kubectl get po -l app.kubernetes.io/name=external-dns -n tanzu-system-ingress | grep Running ; [ $? -ne 0 ]; do
 	echo external-dns is not yet ready
@@ -86,4 +86,4 @@ kubectl annotate service envoy "external-dns.alpha.kubernetes.io/hostname=$(yq r
 kubectl create ns argocd
 helm repo add argo https://argoproj.github.io/argo-helm
 helm install argocd argo/argo-cd -f manifests/mgmt/values-argo.yaml  -n argocd
-kubectl apply -f generated/$(yq r $PARAMS_YAML shared-services-cluster.name)/argocd/httpproxy.yaml
+kubectl apply -f manifests/mgmt/argo-http-proxy.yaml

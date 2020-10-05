@@ -1,0 +1,7 @@
+provider: aws
+txtOwnerId: Z10216462Y3G2KQ1H8ATW
+aws:
+  credentials:
+    accessKey: xxxx
+    secretKey: xxx
+  region: us-east-2
