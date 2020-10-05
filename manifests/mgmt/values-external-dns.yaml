@@ -1,3 +1,4 @@
+provider: aws
 aws:
   credentials:
     secretKey: xxx

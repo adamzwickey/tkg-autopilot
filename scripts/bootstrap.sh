@@ -54,6 +54,10 @@ cat $HOME/.tkg/config.yaml
 
 MGMT_PLAN=$(yq r $VARS_YAML tkg.mgmt.plan)
 tkg init -i aws -p $MGMT_PLAN --ceip-participation false --name $(yq r $VARS_YAML tkg.mgmt.name) --cni antrea -v 8
+# once created we'll upload kube and tkg config files for use in local workstation if needed
+aws s3 cp $HOME/.tkg/config.yaml s3://tkg-autopilot/config.yaml  
+aws s3 cp $HOME/.kube/config s3://tkg-autopilot/kubeconfig  
+
 
 cd /tkg-autopilot
 kubectl apply -f manifests/mgmt/cluster-issuer.yaml
@@ -62,6 +66,7 @@ kubectl apply -f assets/tkg-extensions-manifests/extensions/tmc-extension-manage
 kubectl apply -f assets/tkg-extensions-manifests/extensions/kapp-controller.yaml
 kubectl apply -f assets/tkg-extensions-manifests/extensions/ingress/contour/namespace-role.yaml
 kubectl create secret generic contour-data-values --from-file=values.yaml=manifests/mgmt/contour-data-values.yaml -n tanzu-system-ingress
+kubectl apply -f assets/tkg-extensions-manifests/extensions/ingress/contour/contour-extension.yaml
 
 # Install Exernal DNS
 yq write manifests/mgmt/values-external-dns.yaml -i "aws.credentials.secretKey" $(yq r $VARS_YAML aws.accessKey)
