@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
-#How to cleanup clusters????
+# Cleanup clusters
+
 
 INSTANCE_ID=$(yq r ec2.yaml -d0 'Instances[0].InstanceId')
 echo Deleting instance $INSTANCE_ID

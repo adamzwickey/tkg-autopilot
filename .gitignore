@@ -1,6 +1,8 @@
 vars.yaml
 lt.yaml
 ec2.yaml
+config.yaml
+kubeconfig
 custom-template.json
 keys/
 extensions-1.2/
