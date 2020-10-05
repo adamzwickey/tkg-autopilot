@@ -20,6 +20,7 @@ mv tkg/ytt-linux-* /usr/bin/ytt
 
 # TKG Extensions
 tar -zxvf tkg-extensions-manifests-*
+rm *.tar.gz
 mv tkg-extensions-manifests-* tkg-extensions-manifests
 
 # Initialize TKG
