@@ -69,11 +69,12 @@ kubectl create secret generic contour-data-values --from-file=values.yaml=manife
 kubectl apply -f assets/tkg-extensions-manifests/extensions/ingress/contour/contour-extension.yaml
 
 # Install Exernal DNS
-yq write manifests/mgmt/values-external-dns.yaml -i "aws.credentials.secretKey" $(yq r $VARS_YAML aws.accessKey)
-yq write manifests/mgmt/values-external-dns.yaml -i "aws.credentials.accessKey" $(yq r $VARS_YAML aws.secretKey)
-yq write manifests/mgmt/values-external-dns.yaml -i "aws.region" $(yq r $VARS_YAML aws.region)
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helm upgrade --install external-dns bitnami/external-dns -n tanzu-system-ingress -f manifests/mgmt/values-external-dns.yaml
+helm upgrade --install external-dns-aws bitnami/external-dns \
+--set hostedzone=$(yq r $VARS_YAML aws.hostedZoneId) \ 
+--set AWS_ACCESS_KEY_ID=$(echo -n $(yq r $VARS_YAML aws.accessKey) | base64) \
+--set AWS_SECRET_ACCESS_KEY=$(echo -n $(yq r $VARS_YAML aws.secretKey) | base64) \
+--set iaas=aws -n tanzu-system-ingress
 #Wait for pod to be ready
 while kubectl get po -l app.kubernetes.io/name=external-dns -n tanzu-system-ingress | grep Running ; [ $? -ne 0 ]; do
 	echo external-dns is not yet ready
