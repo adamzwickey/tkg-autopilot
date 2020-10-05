@@ -85,5 +85,9 @@ kubectl annotate service envoy "external-dns.alpha.kubernetes.io/hostname=$(yq r
 # Install ArgoCD
 kubectl create ns argocd
 helm repo add argo https://argoproj.github.io/argo-helm
+#export ARGOCD_PWD=VMware1!                                                                                                                                                             ─╯
+#htpasswd -nbBC 10 "" $ARGOCD_PWD | tr -d ':\n' | sed 's/$2y/$2a/'                                                                                                                      ─╯
+export ARGO_PWD='$2a$10$Y4TFA2xM/5bw31i3MjnWaewyWp5PL344fe7.R.6gvF/NyqgDlMok2'
+yq write manifests/mgmt/values-argo.yaml -i "config.secret.argocdServerAdminPassword" $ARGO_PWD
 helm install argocd argo/argo-cd -f manifests/mgmt/values-argo.yaml  -n argocd
 kubectl apply -f manifests/mgmt/argo-http-proxy.yaml
