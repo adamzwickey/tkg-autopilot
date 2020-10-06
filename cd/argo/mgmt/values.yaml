@@ -1,0 +1,6 @@
+# spec:
+#   destination:
+#     server: https://kubernetes.default.svc
+#   source:
+#     repoURL: https://gitlab.com/azwickey/tkg-autopilot
+#     targetRevision: HEAD
