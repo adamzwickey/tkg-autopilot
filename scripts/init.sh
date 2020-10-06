@@ -33,7 +33,7 @@ chmod o+x yq_linux_amd64
 sudo mv yq_linux_amd64 /usr/bin/yq
 
 # ArgoCD
-wget https://github.com/argoproj/argo-cd/releases/download/v1.7.7/argocd-linux-amd64 .
+wget https://github.com/argoproj/argo-cd/releases/download/v1.7.7/argocd-linux-amd64
 chmod u+x argocd-linux-amd64
 chmod o+x argocd-linux-amd64
 sudo mv argocd-linux-amd64 /usr/bin/argocd 

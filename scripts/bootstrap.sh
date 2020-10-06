@@ -100,7 +100,9 @@ echo "argopwd: $ARGOCD_PWD"
 export ARGOCD_PWD_ENCODE=$(htpasswd -nbBC 10 "" $ARGOCD_PWD | tr -d ':\n' | sed 's/$2y/$2a/')
 echo "Encoded argopwd: $ARGOCD_PWD_ENCODE"
 yq write manifests/mgmt/values-argo.yaml -i "configs.secret.argocdServerAdminPassword" $ARGOCD_PWD_ENCODE
+yq write manifests/mgmt/values-argo.yaml -i "server.certificate.domain" $(yq r $VARS_YAML tkg.mgmt.argo.ingress)
 helm install argocd argo/argo-cd -f manifests/mgmt/values-argo.yaml  -n argocd
+yq write manifests/mgmt/argo-http-proxy.yaml -i "spec.virtualhost.fqdn" $(yq r $VARS_YAML tkg.mgmt.argo.ingress)
 kubectl apply -f manifests/mgmt/argo-http-proxy.yaml
 
 #Wait for cert to be ready, which means we should be able to access
