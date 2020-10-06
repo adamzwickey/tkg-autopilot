@@ -15,6 +15,6 @@ spec:
     repoURL: {{ .Values.repoURL }}
     targetRevision: {{ .Values.targetRevision }}
     helm:
-    parameters:
-      - name: ns
-        value: {{ .Values.ns }}
+      parameters:
+        - name: ns
+          value: {{ .Values.ns }}
