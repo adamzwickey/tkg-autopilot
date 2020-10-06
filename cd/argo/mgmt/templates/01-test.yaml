@@ -10,6 +10,8 @@ spec:
     namespace: default
     server: {{ .Values.server }}
   project: default
+  syncPolicy:
+    automated: {}
   source:
     path: cd/argo/apps/test
     repoURL: {{ .Values.repoURL }}
