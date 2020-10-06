@@ -90,7 +90,7 @@ while kubectl get po -l app.kubernetes.io/name=external-dns -n tanzu-system-ingr
 	echo external-dns is not yet ready
 	sleep 5s
 done
-kubectl annotate service envoy "external-dns.alpha.kubernetes.io/hostname=$(yq r $VARS_YAML tkg.mgmt.ingress)." -n tanzu-system-ingress --overwrite
+kubectl annotate service envoy "external-dns.alpha.kubernetes.io/hostname=$(yq r $VARS_YAML tkg.mgmt.argo.ingress)." -n tanzu-system-ingress --overwrite
 
 # Install ArgoCD
 kubectl create ns argocd
@@ -122,7 +122,7 @@ kubectl config set-context $MGMT_CLUSTER-argocd-token-user@$MGMT_CLUSTER \
   --user $MGMT_CLUSTER-argocd-token-user \
   --cluster $MGMT_CLUSTER
 # Add the config setup with the service account
-argocd login (yq r $VARS_YAML tkg.mgmt.argo.ingress) \
+argocd login $(yq r $VARS_YAML tkg.mgmt.argo.ingress) \
   --username admin \
   --password $ARGOCD_PWD
 argocd cluster add $MGMT_CLUSTER-argocd-token-user@$MGMT_CLUSTER
