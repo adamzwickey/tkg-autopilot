@@ -64,8 +64,18 @@ kubectl apply -f manifests/mgmt/cluster-issuer.yaml
 # Install Ingress
 kubectl apply -f assets/tkg-extensions-manifests/extensions/tmc-extension-manager.yaml
 kubectl apply -f assets/tkg-extensions-manifests/extensions/kapp-controller.yaml
+
+#Temp patches for staging
+kubectl set image deployment/extension-manager extension-manager=projects-stg.registry.vmware.com/tkg/tmc-extension-manager:v1.2.0_vmware.1 -n vmware-system-tmc
+kubectl set image deployment/kapp-controller kapp-controller=projects-stg.registry.vmware.com/tkg/kapp-controller:v0.9.0_vmware.1 -n vmware-system-tmc
+
 kubectl apply -f assets/tkg-extensions-manifests/extensions/ingress/contour/namespace-role.yaml
 kubectl create secret generic contour-data-values --from-file=values.yaml=manifests/mgmt/contour-data-values.yaml -n tanzu-system-ingress
+#Temp patches for staging
+export STAGING_IMAGE_REGISTRY=projects-stg.registry.vmware.com/tkg
+export IMAGE_TAG=v1.2.0_vmware.1
+find assets/tkg-extensions-manifests/extensions/ -name *-extension.yaml | xargs sed -i -e "s|url: .*tkg-extensions-templates:.*|url: ${STAGING_IMAGE_REGISTRY}/tkg-extensions-templates:${IMAGE_TAG}|"
+
 kubectl apply -f assets/tkg-extensions-manifests/extensions/ingress/contour/contour-extension.yaml
 
 # Install Exernal DNS
@@ -85,9 +95,34 @@ kubectl annotate service envoy "external-dns.alpha.kubernetes.io/hostname=$(yq r
 # Install ArgoCD
 kubectl create ns argocd
 helm repo add argo https://argoproj.github.io/argo-helm
-#export ARGOCD_PWD=VMware1!                                                                                                                                                             ─╯
-#htpasswd -nbBC 10 "" $ARGOCD_PWD | tr -d ':\n' | sed 's/$2y/$2a/'                                                                                                                      ─╯
-export ARGO_PWD='$2a$10$Y4TFA2xM/5bw31i3MjnWaewyWp5PL344fe7.R.6gvF/NyqgDlMok2'
-yq write manifests/mgmt/values-argo.yaml -i "config.secret.argocdServerAdminPassword" $ARGO_PWD
+export ARGOCD_PWD=$(yq r $VARS_YAML tkg.mgmt.argo.pwd)
+echo "argopwd: $ARGOCD_PWD"
+export ARGOCD_PWD_ENCODE=$(htpasswd -nbBC 10 "" $ARGOCD_PWD | tr -d ':\n' | sed 's/$2y/$2a/')
+echo "Encoded argopwd: $ARGOCD_PWD_ENCODE"
+yq write manifests/mgmt/values-argo.yaml -i "configs.secret.argocdServerAdminPassword" $ARGOCD_PWD_ENCODE
 helm install argocd argo/argo-cd -f manifests/mgmt/values-argo.yaml  -n argocd
 kubectl apply -f manifests/mgmt/argo-http-proxy.yaml
+
+#Wait for cert to be ready, which means we should be able to access
+while kubectl get certificate -n argocd argocd-server | grep True ; [ $? -ne 0 ]; do
+	echo Argo Ingress is not yet ready
+	sleep 5s
+done
+
+export MGMT_CLUSTER=$(yq r $VARS_YAML tkg.mgmt.name)
+kubectl config use-context $MGMT_CLUSTER-admin@$MGMT_CLUSTER
+kubectl create serviceaccount argocd -n argocd
+kubectl create clusterrolebinding argocd --clusterrole=cluster-admin --serviceaccount=argocd:argocd
+export TOKEN_SECRET=$(kubectl get serviceaccount -n argocd argocd -o jsonpath='{.secrets[0].name}')
+export TOKEN=$(kubectl get secret -n argocd $TOKEN_SECRET -o jsonpath='{.data.token}' | base64 --decode)
+kubectl config set-credentials $MGMT_CLUSTER-argocd-token-user --token $TOKEN
+kubectl config set-context $MGMT_CLUSTER-argocd-token-user@$MGMT_CLUSTER \
+  --user $MGMT_CLUSTER-argocd-token-user \
+  --cluster $MGMT_CLUSTER
+# Add the config setup with the service account
+argocd login (yq r $VARS_YAML tkg.mgmt.argo.ingress) \
+  --username admin \
+  --password $ARGOCD_PWD
+argocd cluster add $MGMT_CLUSTER-argocd-token-user@$MGMT_CLUSTER
+
+# Add Mgmt Cluster App of Apps
