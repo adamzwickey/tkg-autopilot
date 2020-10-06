@@ -8,9 +8,9 @@ metadata:
 spec:
   destination:
     namespace: default
-    server: {{ .Values.spec.destination.server }}
+    server: {{ .Values.server }}
   project: default
   source:
     path: cd/argo/apps/test
-    repoURL: {{ .Values.spec.source.repoURL }}
-    targetRevision: {{ .Values.spec.source.targetRevision }}
+    repoURL: {{ .Values.repoURL }}
+    targetRevision: {{ .Values.targetRevision }}
