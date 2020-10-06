@@ -128,3 +128,10 @@ argocd login $(yq r $VARS_YAML tkg.mgmt.argo.ingress) \
 argocd cluster add $MGMT_CLUSTER-argocd-token-user@$MGMT_CLUSTER
 
 # Add Mgmt Cluster App of Apps
+SERVER=$(argocd cluster list | grep $MGMT_CLUSTER-argocd-token-user@$MGMT_CLUSTER | awk '{print $1}')
+argocd app create mgmt-app-of-apps \
+  --repo https://gitlab.com/azwickey/tkg-autopilot.git \
+  --dest-server $SERVER \
+  --dest-namespace default \
+  --sync-policy automated \
+  --path cd/argo/mgmt
