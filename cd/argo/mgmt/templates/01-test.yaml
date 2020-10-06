@@ -14,3 +14,7 @@ spec:
     path: cd/argo/apps/test
     repoURL: {{ .Values.repoURL }}
     targetRevision: {{ .Values.targetRevision }}
+    helm:
+    parameters:
+      - name: ns
+        value: {{ .Values.ns }}
