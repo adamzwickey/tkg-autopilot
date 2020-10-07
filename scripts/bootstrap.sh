@@ -132,5 +132,5 @@ argocd app create mgmt-app-of-apps \
   --dest-namespace default \
   --sync-policy automated \
   --path cd/argo/mgmt \
-  --helm-set ns=adamz \ 
+  --helm-set ns=adamz \
   --helm-set server=$SERVER 
