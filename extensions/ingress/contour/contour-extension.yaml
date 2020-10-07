@@ -25,10 +25,10 @@ spec:
       fetch:
         - image:
             url: projects-stg.registry.vmware.com/tkg/tkg-extensions-templates:v1.2.0_vmware.1
-        - git:
-            url: https://gitlab.com/azwickey/tkg-autopilot
-            ref: HEAD
-            subPath: extensions/ingress/contour/overlays
+        # - git:
+        #     url: https://gitlab.com/azwickey/tkg-autopilot
+        #     ref: HEAD
+        #     subPath: extensions/ingress/contour/overlays
       template:
         - ytt:
             ignoreUnknownComments: true
@@ -36,6 +36,17 @@ spec:
               - tkg-extensions/common
               - tkg-extensions/ingress/contour
             inline:
+            paths:
+              annotations.yaml: |
+                #@ load("@ytt:overlay", "overlay")
+
+                #@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "envoy"}})
+                ---
+                metadata:
+                  #@overlay/match 
+                  annotations: 
+                    external-dns.alpha.kubernetes.io/hostname: "*.mgmt.tanzu.zwickey.net."
+
               pathsFrom:
                 - secretRef:
                     name: contour-data-values
