@@ -31,7 +31,7 @@ spec:
             paths:
               - tkg-extensions/common
               - tkg-extensions/ingress/contour
-              - tkg-autopilot
+              
             inline:
               paths:
                 test.yaml: |
