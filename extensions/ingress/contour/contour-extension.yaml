@@ -26,9 +26,9 @@ spec:
         - image:
             url: projects-stg.registry.vmware.com/tkg/tkg-extensions-templates:v1.2.0_vmware.1
         - git:
-            url: https://github.com/k14s/k8s-simple-app-example
+            url: https://gitlab.com/azwickey/tkg-autopilot
             ref: HEAD
-            subPath: config-step-2-template
+            subPath: tkg-extensions/ingress/contour/overlays
       template:
         - ytt:
             ignoreUnknownComments: true
