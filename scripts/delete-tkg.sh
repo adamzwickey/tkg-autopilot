@@ -6,4 +6,4 @@ export AWS_ACCESS_KEY_ID=$(yq r $VARS_YAML aws.accessKey)
 export AWS_SECRET_ACCESS_KEY=$(yq r $VARS_YAML aws.secretKey)
 export AWS_REGION=$(yq r $VARS_YAML aws.region)
 
-tkg delete mc $(yq r $VARS_YAML tkg.mgmt.name)
+tkg delete mc $(yq r $VARS_YAML tkg.mgmt.name) -y
