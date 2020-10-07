@@ -25,10 +25,6 @@ spec:
       fetch:
         - image:
             url: projects-stg.registry.vmware.com/tkg/tkg-extensions-templates:v1.2.0_vmware.1
-        # - git:
-        #     url: https://gitlab.com/azwickey/tkg-autopilot
-        #     ref: HEAD
-        #     subPath: extensions/ingress/contour/overlays
       template:
         - ytt:
             ignoreUnknownComments: true
