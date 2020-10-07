@@ -35,5 +35,5 @@ while [ -z "$PUBLIC_IP" ] ; do
     echo public ip... $PUBLIC_IP
     sleep 1  #Loop until its ready
 done
-sleep 10 # Need time for SSH process to startup... usually takes just a few secs
+sleep 30 # Need time for SSH process to startup... usually takes just a few secs
 ssh -i keys/tkg-aws-ssh.pem ec2-user@$PUBLIC_IP sudo tail -f /var/log/cloud-init-output.log
