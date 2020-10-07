@@ -31,8 +31,11 @@ spec:
             paths:
               - tkg-extensions/common
               - tkg-extensions/ingress/contour
-              - tkg-autopilot/ingress/contour/overlays
+              - tkg-autopilot
             inline:
+              paths:
+                tkg-autopilot/test.yaml: |
+                  file-content
               pathsFrom:
                 - secretRef:
                     name: contour-data-values
