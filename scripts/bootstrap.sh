@@ -70,7 +70,7 @@ kubectl create secret generic contour-data-values --from-file=values.yaml=manife
 kubectl apply -f extensions/ingress/contour/contour-extension.yaml
 
 #Wait for SVC to be ready with DNS
-while kubectl get svc envoy -n tanzu-system-ingress | grep elb.amazonws.com ; [ $? -ne 0 ]; do
+while kubectl get svc envoy -n tanzu-system-ingress | grep elb.amazonaws.com ; [ $? -ne 0 ]; do
 	echo envoy service is not yet ready
 	sleep 5s
 done
@@ -87,7 +87,7 @@ while kubectl get po -l app.kubernetes.io/name=external-dns -n tanzu-system-ingr
 	echo external-dns is not yet ready
 	sleep 5s
 done
-kubectl annotate service envoy "external-dns.alpha.kubernetes.io/hostname=$(yq r $VARS_YAML tkg.mgmt.argo.ingress)." -n tanzu-system-ingress --overwrite
+kubectl annotate service envoy "external-dns.alpha.kubernetes.io/hostname=$(yq r $VARS_YAML tkg.mgmt.ingress)." -n tanzu-system-ingress --overwrite
 
 # Install ArgoCD
 kubectl create ns argocd
