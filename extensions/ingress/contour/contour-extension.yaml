@@ -31,11 +31,10 @@ spec:
             paths:
               - tkg-extensions/common
               - tkg-extensions/ingress/contour
-              
             inline:
               paths:
                 test.yaml: |
-                  file-content
+                  #Empty
               pathsFrom:
                 - secretRef:
                     name: contour-data-values
