@@ -34,7 +34,7 @@ spec:
               - tkg-autopilot
             inline:
               paths:
-                tkg-autopilot/test.yaml: |
+                test.yaml: |
                   file-content
               pathsFrom:
                 - secretRef:
