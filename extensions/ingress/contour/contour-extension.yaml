@@ -28,7 +28,7 @@ spec:
         - git:
             url: https://gitlab.com/azwickey/tkg-autopilot
             ref: HEAD
-            subPath: tkg-extensions/ingress/contour/overlays
+            subPath: extensions/ingress/contour/overlays
       template:
         - ytt:
             ignoreUnknownComments: true
