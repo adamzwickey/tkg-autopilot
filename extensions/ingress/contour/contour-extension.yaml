@@ -34,7 +34,7 @@ spec:
             inline:
               paths:
                 test.yaml: |
-                  adsasda: adasd
+                  #adsasda: adasd
               pathsFrom:
                 - secretRef:
                     name: contour-data-values
