@@ -33,7 +33,7 @@ spec:
               - tkg-extensions/ingress/contour
             inline:
               paths:
-                test.yaml: |
+                annotations.yaml: |
                   #@ load("@ytt:overlay", "overlay")
 
                   #@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "envoy"}})
