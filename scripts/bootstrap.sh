@@ -78,6 +78,12 @@ find assets/tkg-extensions-manifests/extensions/ -name *-extension.yaml | xargs 
 
 kubectl apply -f assets/tkg-extensions-manifests/extensions/ingress/contour/contour-extension.yaml
 
+#Wait for SVC to be ready with DNS
+while kubectl get svc envoy -n tanzu-system-ingress | grep elb.amazonws.com ; [ $? -ne 0 ]; do
+	echo envoy service is not yet ready
+	sleep 5s
+done
+
 # Install Exernal DNS
 helm repo add bitnami https://charts.bitnami.com/bitnami
 yq write manifests/mgmt/values-external-dns.yaml -i "aws.credentials.secretKey" $(yq r $VARS_YAML aws.secretKey)
