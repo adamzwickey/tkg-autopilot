@@ -62,21 +62,12 @@ aws s3 cp $HOME/.kube/config s3://tkg-autopilot/kubeconfig
 cd /tkg-autopilot
 kubectl apply -f manifests/mgmt/cluster-issuer.yaml
 # Install Ingress
-kubectl apply -f assets/tkg-extensions-manifests/extensions/tmc-extension-manager.yaml
-kubectl apply -f assets/tkg-extensions-manifests/extensions/kapp-controller.yaml
+kubectl apply -f extensions/tmc-extension-manager.yaml
+kubectl apply -f extensions/kapp-controller.yaml
 
-#Temp patches for staging
-kubectl set image deployment/extension-manager extension-manager=projects-stg.registry.vmware.com/tkg/tmc-extension-manager:v1.2.0_vmware.1 -n vmware-system-tmc
-kubectl set image deployment/kapp-controller kapp-controller=projects-stg.registry.vmware.com/tkg/kapp-controller:v0.9.0_vmware.1 -n vmware-system-tmc
-
-kubectl apply -f assets/tkg-extensions-manifests/extensions/ingress/contour/namespace-role.yaml
+kubectl apply -f extensions/ingress/contour/namespace-role.yaml
 kubectl create secret generic contour-data-values --from-file=values.yaml=manifests/mgmt/contour-data-values.yaml -n tanzu-system-ingress
-#Temp patches for staging
-export STAGING_IMAGE_REGISTRY=projects-stg.registry.vmware.com/tkg
-export IMAGE_TAG=v1.2.0_vmware.1
-find assets/tkg-extensions-manifests/extensions/ -name *-extension.yaml | xargs sed -i -e "s|url: .*tkg-extensions-templates:.*|url: ${STAGING_IMAGE_REGISTRY}/tkg-extensions-templates:${IMAGE_TAG}|"
-
-kubectl apply -f assets/tkg-extensions-manifests/extensions/ingress/contour/contour-extension.yaml
+kubectl apply -f extensions/ingress/contour/contour-extension.yaml
 
 #Wait for SVC to be ready with DNS
 while kubectl get svc envoy -n tanzu-system-ingress | grep elb.amazonws.com ; [ $? -ne 0 ]; do
