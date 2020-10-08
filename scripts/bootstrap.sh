@@ -67,9 +67,9 @@ yq write manifests/mgmt/values-external-dns.yaml -i "aws.credentials.secretKey" 
 yq write manifests/mgmt/values-external-dns.yaml -i "aws.credentials.accessKey" $(yq r $VARS_YAML aws.accessKey)
 yq write manifests/mgmt/values-external-dns.yaml -i "aws.region" $(yq r $VARS_YAML aws.region)
 yq write manifests/mgmt/values-external-dns.yaml -i "txtOwnerId" $(yq r $VARS_YAML aws.hostedZoneId)
-helm install external-dns-aws bitnami/external-dns -n tanzu-system-ingress -f manifests/mgmt/values-external-dns.yaml
+helm install external-dns-aws bitnami/external-dns -f manifests/mgmt/values-external-dns.yaml
 #Wait for pod to be ready
-while kubectl get po -l app.kubernetes.io/name=external-dns -n tanzu-system-ingress | grep Running ; [ $? -ne 0 ]; do
+while kubectl get po -l app.kubernetes.io/name=external-dns | grep Running ; [ $? -ne 0 ]; do
 	echo external-dns is not yet ready
 	sleep 5s
 done
@@ -86,9 +86,9 @@ yq write manifests/mgmt/values-argo.yaml -i "server.certificate.domain" $(yq r $
 yq write manifests/mgmt/values-argo.yaml -i 'server.service.annotations."external-dns.alpha.kubernetes.io/hostname"' $(yq r $VARS_YAML tkg.mgmt.argo.ingress) 
 helm install argocd argo/argo-cd -f manifests/mgmt/values-argo.yaml  -n argocd
 
-#Wait for cert to be ready, which means we should be able to access
-while kubectl get po -n argocd argocd-server | grep Running ; [ $? -ne 0 ]; do
-	echo Argo Server is not yet ready
+#Wait for argo and ingress to be ready
+while nslookup $(yq r $VARS_YAML tkg.mgmt.argo.ingress) | grep Name ; [ $? -ne 0 ]; do
+	echo Argo Server and DNS is not yet ready
 	sleep 5s
 done
 
