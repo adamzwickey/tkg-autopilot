@@ -38,6 +38,7 @@ spec:
                   #@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "envoy"}})
                   ---
                   metadata:
+                    #@overlay/match-child-defaults missing_ok=True
                     annotations: 
                       test: test
 
