@@ -16,6 +16,8 @@ stringData:
       service:
         type: NodePort
       config:
+        web:
+          http: 0.0.0.0:5556
         connector: oidc
         oidc:
           CLIENT_ID: {{ .Values.clientId }}
