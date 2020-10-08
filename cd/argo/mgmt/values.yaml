@@ -11,4 +11,6 @@ dex:
   wlName1:  aws-workload1
   gangway1: gangway.workload1.tanzu.zwickey.net
   wlClientSecret1:  topsecret # This must be overridden
+workload1:
+  clusterName: aws-workload1
   

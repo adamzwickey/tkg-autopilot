@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: workload-cluster-1
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: default
+    server: {{ .Values.server }}
+  project: default
+  syncPolicy:
+    automated: {}
+  source:
+    path: cd/argo/apps/workload-cluster
+    repoURL: {{ .Values.repoURL }}
+    targetRevision: {{ .Values.targetRevision }}
+    helm:
+      parameters:
+        - name: clusterName
+          value: {{ .Values.workload1.clusterName }}
+          
+          
