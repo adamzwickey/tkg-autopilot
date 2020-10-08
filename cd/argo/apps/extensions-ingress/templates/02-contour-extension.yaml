@@ -39,7 +39,7 @@ spec:
                   ---
                   metadata:
                     annotations: 
-                      external-dns.alpha.kubernetes.io/hostname: "*.mgmt.tanzu.zwickey.net."
+                      test: test
 
               pathsFrom:
                 - secretRef:
