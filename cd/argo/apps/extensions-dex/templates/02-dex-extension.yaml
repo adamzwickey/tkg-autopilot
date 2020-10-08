@@ -37,7 +37,7 @@ spec:
               paths:
                 annotations.yaml: |
                   #@ load("@ytt:overlay", "overlay")
-                  #@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "dex"}})
+                  #@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "dexsvc"}})
                   ---
                   metadata:
                     #@overlay/match-child-defaults missing_ok=True
