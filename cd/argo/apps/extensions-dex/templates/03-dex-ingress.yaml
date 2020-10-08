@@ -17,5 +17,5 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: dexsvc
+          serviceName: dex
           servicePort: 5555
