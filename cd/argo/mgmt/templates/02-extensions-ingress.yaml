@@ -20,3 +20,5 @@ spec:
       parameters:
         - name: ingressFQDN
           value: "{{ .Values.ingress.ingressFQDN }}"
+        - name: email
+          value: "{{ .Values.ingress.email }}"

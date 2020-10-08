@@ -3,6 +3,7 @@ targetRevision: HEAD
 server: https://kubernetes.api.lb:6443  # This must be overridden
 ingress:
   ingressFQDN: '*.mgmt.tanzu.zwickey.net'
+  email: azwickey@gmail.com
 dex:
   ingressFQDN: dex.mgmt.tanzu.zwickey.net
   clientId: 0oaagkq37j5IEbOqe4x6
