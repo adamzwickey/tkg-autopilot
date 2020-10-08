@@ -13,6 +13,7 @@ stringData:
     dex:
       image:
         repository: projects-stg.registry.vmware.com/tkg
+      config:
         connector: oidc
         oidc:
           CLIENT_ID: {{ .Values.clientId }}
