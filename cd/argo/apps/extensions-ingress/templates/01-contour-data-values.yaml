@@ -4,7 +4,7 @@ metadata:
   name: contour-data-values
   namespace: tanzu-system-ingress
 type: Opaque
-data:
+stringData:
   values.yaml: |
     #@data/values
     #@overlay/match-child-defaults missing_ok=True
