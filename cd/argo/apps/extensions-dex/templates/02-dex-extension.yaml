@@ -35,20 +35,19 @@ spec:
               - tkg-extensions/authentication/dex
             inline:
               container-port.yaml: |
-                  #@ load("@ytt:overlay", "overlay")
-
-                  #@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "dexsvc"}})
-                  ---
-                  metadata:
-                    #@overlay/match missing_ok=True
-                    annotations: 
-                      test: test
-                  spec:
-                    ports:
-                    #@overlay/match by=overlay.subset({"name": "dex"})
-                    - name: "dex"
-                      #@overlay/replace
-                      port: 5555
+                #@ load("@ytt:overlay", "overlay")
+                #@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "dex"}})
+                ---
+                spec:
+                  template:
+                    spec:
+                      containers:
+                      #@overlay/match by=overlay.index(0)
+                      - ports:
+                        #@overlay/append
+                        - containerPort: 5555
+                          name: http
+                          protocol: TCP
               pathsFrom:
                 - secretRef:
                     name: dex-data-values
