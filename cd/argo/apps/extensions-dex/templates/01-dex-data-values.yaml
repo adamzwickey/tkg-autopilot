@@ -30,5 +30,4 @@ stringData:
     dns:
       aws:
         DEX_SVC_LB_HOSTNAME: {{ .Values.ingressFQDN }}
-        dnsNames:
-        - {{ .Values.ingressFQDN }}
+        dnsNames: []
