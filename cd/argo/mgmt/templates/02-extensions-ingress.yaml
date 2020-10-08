@@ -18,5 +18,5 @@ spec:
     targetRevision: {{ .Values.targetRevision }}
     helm:
       parameters:
-        - name: ns
-          value: {{ .Values.ingress.ingressFQDN }}
+        - name: ingressFQDN
+          value: "{{ .Values.ingress.ingressFQDN }}"
