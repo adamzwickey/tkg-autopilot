@@ -13,6 +13,8 @@ stringData:
     dex:
       image:
         repository: projects-stg.registry.vmware.com/tkg
+      service:
+        type: NodePort
       config:
         connector: oidc
         oidc:
