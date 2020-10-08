@@ -37,7 +37,7 @@ spec:
               container-port.yaml: |
                   #@ load("@ytt:overlay", "overlay")
 
-                  #@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "dex"}})
+                  #@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "dexsvc"}})
                   ---
                   metadata:
                     #@overlay/match missing_ok=True
