@@ -34,15 +34,6 @@ spec:
               - tkg-extensions/common
               - tkg-extensions/authentication/dex
             inline:
-              paths:
-                annotations.yaml: |
-                  #@ load("@ytt:overlay", "overlay")
-                  #@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "dexsvc"}})
-                  ---
-                  metadata:
-                    #@overlay/match-child-defaults missing_ok=True
-                    annotations: 
-                      external-dns.alpha.kubernetes.io/hostname: "{{ .Values.ingressFQDN }}."
               pathsFrom:
                 - secretRef:
                     name: dex-data-values
