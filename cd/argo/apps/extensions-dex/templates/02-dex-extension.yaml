@@ -36,19 +36,19 @@ spec:
             inline:
               container-port.yaml: |
                   #@ load("@ytt:overlay", "overlay")
-                  #@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "dex"}})
+
+                  #@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "dex"}})
                   ---
+                  metadata:
+                    #@overlay/match missing_ok=True
+                    annotations: 
+                      test: test
                   spec:
-                    template:
-                      spec:
-                        containers:
-                        #@overlay/match by=overlay.subset({"name": "dex"})
-                        - name: dex
-                          ports:
-                          #@overlay/insert
-                          - name: http
-                            containerPort: 5555
-                            protocol: TCP
+                    ports:
+                    #@overlay/match by=overlay.subset({"name": "dex"})
+                    - name: "dex"
+                      #@overlay/replace
+                      port: 5555
               pathsFrom:
                 - secretRef:
                     name: dex-data-values
