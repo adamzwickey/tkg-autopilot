@@ -1,0 +1,2056 @@
+apiVersion: cluster.x-k8s.io/v1alpha3
+kind: Cluster
+metadata:
+  annotations:
+    tkg/plan: prod
+  labels:
+    tkg.tanzu.vmware.com/cluster-name: {{ .Values.clusterName }}
+  name: {{ .Values.clusterName }}
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 100.96.0.0/11
+    services:
+      cidrBlocks:
+      - 100.64.0.0/13
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
+    kind: KubeadmControlPlane
+    name: {{ .Values.clusterName }}-control-plane
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+    kind: AWSCluster
+    name: {{ .Values.clusterName }}
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+kind: AWSCluster
+metadata:
+  name: {{ .Values.clusterName }}
+  namespace: default
+spec:
+  additionalTags:
+    Environment: null
+    Team: null
+  bastion:
+    enabled: false
+  networkSpec:
+    cni:
+      cniIngressRules:
+      - description: antrea1
+        fromPort: 10349
+        protocol: tcp
+        toPort: 10349
+      - description: genev
+        fromPort: 6081
+        protocol: udp
+        toPort: 6081
+    subnets:
+    - availabilityZone: us-east-2a
+      cidrBlock: ""
+      id: subnet-05e36314678bcfa72
+      isPublic: true
+    - availabilityZone: us-east-2a
+      cidrBlock: ""
+      id: subnet-01504f4f789892d81
+    - availabilityZone: us-east-2b
+      cidrBlock: ""
+      id: subnet-097a3feff692b9c5e
+      isPublic: true
+    - availabilityZone: us-east-2b
+      cidrBlock: ""
+      id: subnet-007b3cc4c90e0a4ac
+    - availabilityZone: us-east-2c
+      cidrBlock: ""
+      id: subnet-02dcfd6a721f54373
+      isPublic: true
+    - availabilityZone: us-east-2c
+      cidrBlock: ""
+      id: subnet-0cd72913ed8084dc4
+    vpc:
+      cidrBlock: ""
+      id: vpc-07677aca311470455
+  region: us-east-2
+  sshKeyName: tkg-tkg-aws-default
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
+kind: KubeadmControlPlane
+metadata:
+  name: {{ .Values.clusterName }}-control-plane
+  namespace: default
+spec:
+  infrastructureTemplate:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+    kind: AWSMachineTemplate
+    name: {{ .Values.clusterName }}-control-plane
+  kubeadmConfigSpec:
+    clusterConfiguration:
+      apiServer:
+        extraArgs:
+          cloud-provider: aws
+          oidc-ca-file: /etc/tkg/pki/dex-ca.crt
+          oidc-client-id: {{ .Values.clusterName }}
+          oidc-groups-claim: groups
+          oidc-issuer-url: https://dex.mgmt.tanzu.zwickey.net
+          oidc-username-claim: email
+          tls-cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_256_GCM_SHA384
+        extraVolumes:
+        - hostPath: /etc/tkg/pki
+          mountPath: /etc/tkg/pki
+          name: dex-ca
+          pathType: DirectoryOrCreate
+          readOnly: true
+        timeoutForControlPlane: 8m0s
+      controllerManager:
+        extraArgs:
+          cloud-provider: aws
+          tls-cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+      dns:
+        imageRepository: registry.tkg.vmware.run
+        imageTag: v1.7.0_vmware.3
+        type: CoreDNS
+      etcd:
+        local:
+          dataDir: /var/lib/etcd
+          extraArgs:
+            cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+          imageRepository: registry.tkg.vmware.run
+          imageTag: v3.4.13_vmware.2
+      imageRepository: registry.tkg.vmware.run
+      scheduler:
+        extraArgs:
+          tls-cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+    files:
+    - content: H4sIAPN7f18AA41US6+zRgzd8yu6j654JAGy6GIGJjCQIQwhPLLjdQcIJEB4JPn1zf1aVaraRS1Zso6PLcvH8tfXxyAysPObhjwf77EGfPQDfnEEY93RNQ2ULwYWDAHDHiDXfWF131HhhvUaEeC9LZHiRaexZd8vuJwzB1B0gBQsHH4jlwDBAOIZaSUx8lZcx5HVEA8sOov1gFIdLbmQSNl4MYINgZtI9/FCfLAcdbThiM7eRLz/gE/yoTo12vyFLf+nOfeP7hhDXAMHsmtfXitjtwjwM+oegKMGqAp+8hqzPzECveiaw2FMOCWLTrUll9ptTrIJ4C3T+7bJZJE16yFxZzNVHDNeO8+GHarInCjf8Wvjys55WiZiH3Jyg2B2lxUsxIE19FOqvUnaPuSkmMdrEI3L1iYOsjPHNyYqK6/xunl3po/nlar06+PCyUoH28PGjQY6uWrbE69fV09SbsYu9I6gJiuX9idKd+P4wqq8Ca+FMziZIpyLDQhwx6WOePRLrA2OzF/pXugYXeXHzAWgz77PidYZiSfw83eEbml/i0J86BLShkWKAnU8qCsObj9Lltgq5fvqsUUOnwXDXU6N5opXfJMJQxd2eSJMq74LcjnZDXfYSlGs1u2tDsSjxY2zNz7q094oDGhQrAMK4F0iS+yDHDInME9ntK/BGTI2QIb2kGYfToztJYaQnk3uc32LDj6aeoIPqMlDgBegg9evYg8h+w06xsa/pT60zpzGOPkzFm9cGtEpN/ZTcTt/PO9iaWyK03a6RPS/TldnDEFgVEfRofFyIYyDBi+50tvT3Us1eeoyREGlNdvnMIoD2RbeLt5W/gWqgSSKpVTtzrt6Lkletg/FCxun4p7SQ7uMKInMLts5hWgtjZnQbQ766bvmqWj7RcW2Txr1QoGCUyi2eJGOEaMKwW9ff3MLKx6Xy2g6gG89dntFcNrkzn1QcKxW0k7fqTt40isxkB6j/boWzfck2Q8hnJ6BfJRtnxurvJaENmBpE6+1V3QIdrSx5mXVeBc4WPWGmXHRPmXVz0A/zr1kNSGf1eSllMqrOhmc9qgS7/KNpVU7elCS1kVsW+VomYHm9nR9znIvE5uDYRDFzto5TGAxva5hh/l9KDWMcV1hxPvhqLsp/Z379WOQo//77/wBMuklbZQEAAA=
+      encoding: gzip+base64
+      path: /etc/tkg/pki/dex-ca.crt
+    initConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          cloud-provider: aws
+          tls-cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        name: '{{ ds.meta_data.local_hostname }}'
+    joinConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          cloud-provider: aws
+          tls-cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        name: '{{ ds.meta_data.local_hostname }}'
+    useExperimentalRetryJoin: true
+  replicas: 3
+  version: v1.19.1+vmware.2
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+kind: AWSMachineTemplate
+metadata:
+  name: {{ .Values.clusterName }}-control-plane
+  namespace: default
+spec:
+  template:
+    spec:
+      ami:
+        id: ami-058759e4c2532dc14
+      iamInstanceProfile: control-plane.tkg.cloud.vmware.com
+      instanceType: t3.medium
+      rootVolume:
+        size: 80
+      sshKeyName: tkg-tkg-aws-default
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+kind: AWSMachineTemplate
+metadata:
+  name: {{ .Values.clusterName }}-md-0
+  namespace: default
+spec:
+  template:
+    spec:
+      ami:
+        id: ami-058759e4c2532dc14
+      iamInstanceProfile: nodes.tkg.cloud.vmware.com
+      instanceType: t3.xlarge
+      rootVolume:
+        size: 80
+      sshKeyName: tkg-tkg-aws-default
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+kind: KubeadmConfigTemplate
+metadata:
+  name: {{ .Values.clusterName }}-md-0
+  namespace: default
+spec:
+  template:
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            cloud-provider: aws
+            tls-cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+          name: '{{ ds.meta_data.local_hostname }}'
+      useExperimentalRetryJoin: true
+---
+apiVersion: cluster.x-k8s.io/v1alpha3
+kind: MachineDeployment
+metadata:
+  name: {{ .Values.clusterName }}-md-0
+  namespace: default
+spec:
+  clusterName: {{ .Values.clusterName }}
+  replicas: {{ .Values.workersPerPool }}
+  selector:
+    matchLabels: null
+  template:
+    metadata:
+      labels:
+        node-pool: {{ .Values.clusterName }}-worker-pool
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+          kind: KubeadmConfigTemplate
+          name: {{ .Values.clusterName }}-md-0
+      clusterName: {{ .Values.clusterName }}
+      failureDomain: us-east-2a
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+        kind: AWSMachineTemplate
+        name: {{ .Values.clusterName }}-md-0
+      version: v1.19.1+vmware.2
+---
+apiVersion: cluster.x-k8s.io/v1alpha3
+kind: MachineHealthCheck
+metadata:
+  name: {{ .Values.clusterName }}
+  namespace: default
+spec:
+  clusterName: {{ .Values.clusterName }}
+  nodeStartupTimeout: 20m
+  selector:
+    matchLabels:
+      node-pool: {{ .Values.clusterName }}-worker-pool
+  unhealthyConditions:
+  - status: Unknown
+    timeout: 5m
+    type: Ready
+  - status: "False"
+    timeout: 5m
+    type: Ready
+---
+apiVersion: cluster.x-k8s.io/v1alpha3
+kind: MachineDeployment
+metadata:
+  name: {{ .Values.clusterName }}-md-1
+  namespace: default
+spec:
+  clusterName: {{ .Values.clusterName }}
+  replicas: {{ .Values.workersPerPool }}
+  selector:
+    matchLabels: null
+  template:
+    metadata:
+      labels:
+        node-pool: {{ .Values.clusterName }}-worker-pool
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+          kind: KubeadmConfigTemplate
+          name: {{ .Values.clusterName }}-md-1
+      clusterName: {{ .Values.clusterName }}
+      failureDomain: us-east-2b
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+        kind: AWSMachineTemplate
+        name: {{ .Values.clusterName }}-md-1
+      version: v1.19.1+vmware.2
+---
+apiVersion: cluster.x-k8s.io/v1alpha3
+kind: MachineDeployment
+metadata:
+  name: {{ .Values.clusterName }}-md-2
+  namespace: default
+spec:
+  clusterName: {{ .Values.clusterName }}
+  replicas: {{ .Values.workersPerPool }}
+  selector:
+    matchLabels: null
+  template:
+    metadata:
+      labels:
+        node-pool: {{ .Values.clusterName }}-worker-pool
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+          kind: KubeadmConfigTemplate
+          name: {{ .Values.clusterName }}-md-2
+      clusterName: {{ .Values.clusterName }}
+      failureDomain: us-east-2c
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+        kind: AWSMachineTemplate
+        name: {{ .Values.clusterName }}-md-2
+      version: v1.19.1+vmware.2
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+kind: AWSMachineTemplate
+metadata:
+  name: {{ .Values.clusterName }}-md-1
+  namespace: default
+spec:
+  template:
+    spec:
+      ami:
+        id: ami-058759e4c2532dc14
+      iamInstanceProfile: nodes.tkg.cloud.vmware.com
+      instanceType: t3.xlarge
+      sshKeyName: tkg-tkg-aws-default
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+kind: AWSMachineTemplate
+metadata:
+  name: {{ .Values.clusterName }}-md-2
+  namespace: default
+spec:
+  template:
+    spec:
+      ami:
+        id: ami-058759e4c2532dc14
+      iamInstanceProfile: nodes.tkg.cloud.vmware.com
+      instanceType: t3.xlarge
+      sshKeyName: tkg-tkg-aws-default
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+kind: KubeadmConfigTemplate
+metadata:
+  name: {{ .Values.clusterName }}-md-1
+  namespace: default
+spec:
+  template:
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            cloud-provider: aws
+          name: '{{ ds.meta_data.local_hostname }}'
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+kind: KubeadmConfigTemplate
+metadata:
+  name: {{ .Values.clusterName }}-md-2
+  namespace: default
+spec:
+  template:
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            cloud-provider: aws
+          name: '{{ ds.meta_data.local_hostname }}'
+---
+apiVersion: addons.cluster.x-k8s.io/v1alpha3
+kind: ClusterResourceSet
+metadata:
+  annotations:
+    tkg.tanzu.vmware.com/addon-type: cni/antrea
+  labels:
+    cluster.x-k8s.io/cluster-name: {{ .Values.clusterName }}
+  name: {{ .Values.clusterName }}-cni-antrea
+  namespace: default
+spec:
+  clusterSelector:
+    matchLabels:
+      tkg.tanzu.vmware.com/cluster-name: {{ .Values.clusterName }}
+  resources:
+  - kind: Secret
+    name: {{ .Values.clusterName }}-antrea
+  strategy: ApplyOnce
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    tkg.tanzu.vmware.com/addon-type: cni/antrea
+  name: {{ .Values.clusterName }}-antrea
+  namespace: default
+stringData:
+  value: |
+    apiVersion: apiextensions.k8s.io/v1beta1
+    kind: CustomResourceDefinition
+    metadata:
+      labels:
+        app: antrea
+      name: antreaagentinfos.clusterinformation.antrea.tanzu.vmware.com
+    spec:
+      group: clusterinformation.antrea.tanzu.vmware.com
+      names:
+        kind: AntreaAgentInfo
+        plural: antreaagentinfos
+        shortNames:
+        - aai
+        singular: antreaagentinfo
+      scope: Cluster
+      versions:
+      - name: v1beta1
+        served: true
+        storage: true
+    ---
+    apiVersion: apiextensions.k8s.io/v1beta1
+    kind: CustomResourceDefinition
+    metadata:
+      labels:
+        app: antrea
+      name: antreacontrollerinfos.clusterinformation.antrea.tanzu.vmware.com
+    spec:
+      group: clusterinformation.antrea.tanzu.vmware.com
+      names:
+        kind: AntreaControllerInfo
+        plural: antreacontrollerinfos
+        shortNames:
+        - aci
+        singular: antreacontrollerinfo
+      scope: Cluster
+      versions:
+      - name: v1beta1
+        served: true
+        storage: true
+    ---
+    apiVersion: apiextensions.k8s.io/v1beta1
+    kind: CustomResourceDefinition
+    metadata:
+      labels:
+        app: antrea
+      name: clusternetworkpolicies.security.antrea.tanzu.vmware.com
+    spec:
+      additionalPrinterColumns:
+      - JSONPath: .spec.tier
+        description: The Tier to which this ClusterNetworkPolicy belongs to.
+        name: Tier
+        type: string
+      - JSONPath: .spec.priority
+        description: The Priority of this ClusterNetworkPolicy relative to other policies.
+        format: float
+        name: Priority
+        type: number
+      - JSONPath: .metadata.creationTimestamp
+        name: Age
+        type: date
+      group: security.antrea.tanzu.vmware.com
+      names:
+        kind: ClusterNetworkPolicy
+        plural: clusternetworkpolicies
+        shortNames:
+        - cnp
+        singular: clusternetworkpolicy
+      preserveUnknownFields: false
+      scope: Cluster
+      validation:
+        openAPIV3Schema:
+          properties:
+            spec:
+              properties:
+                appliedTo:
+                  items:
+                    properties:
+                      namespaceSelector:
+                        x-kubernetes-preserve-unknown-fields: true
+                      podSelector:
+                        x-kubernetes-preserve-unknown-fields: true
+                    type: object
+                  type: array
+                egress:
+                  items:
+                    properties:
+                      action:
+                        pattern: \bAllow|\bDrop
+                        type: string
+                      ports:
+                        items:
+                          properties:
+                            port:
+                              x-kubernetes-int-or-string: true
+                            protocol:
+                              type: string
+                          type: object
+                        type: array
+                      to:
+                        items:
+                          properties:
+                            ipBlock:
+                              properties:
+                                cidr:
+                                  format: cidr
+                                  type: string
+                              type: object
+                            namespaceSelector:
+                              x-kubernetes-preserve-unknown-fields: true
+                            podSelector:
+                              x-kubernetes-preserve-unknown-fields: true
+                          type: object
+                        type: array
+                    required:
+                    - action
+                    type: object
+                  type: array
+                ingress:
+                  items:
+                    properties:
+                      action:
+                        pattern: \bAllow|\bDrop
+                        type: string
+                      from:
+                        items:
+                          properties:
+                            ipBlock:
+                              properties:
+                                cidr:
+                                  format: cidr
+                                  type: string
+                              type: object
+                            namespaceSelector:
+                              x-kubernetes-preserve-unknown-fields: true
+                            podSelector:
+                              x-kubernetes-preserve-unknown-fields: true
+                          type: object
+                        type: array
+                      ports:
+                        items:
+                          properties:
+                            port:
+                              x-kubernetes-int-or-string: true
+                            protocol:
+                              type: string
+                          type: object
+                        type: array
+                    required:
+                    - action
+                    type: object
+                  type: array
+                priority:
+                  format: float
+                  maximum: 10000
+                  minimum: 1
+                  type: number
+                tier:
+                  enum:
+                  - Emergency
+                  - SecurityOps
+                  - NetworkOps
+                  - Platform
+                  - Application
+                  type: string
+              required:
+              - appliedTo
+              - priority
+              type: object
+          type: object
+      versions:
+      - name: v1alpha1
+        served: true
+        storage: true
+    ---
+    apiVersion: apiextensions.k8s.io/v1beta1
+    kind: CustomResourceDefinition
+    metadata:
+      labels:
+        app: antrea
+      name: traceflows.ops.antrea.tanzu.vmware.com
+    spec:
+      additionalPrinterColumns:
+      - JSONPath: .status.phase
+        description: The phase of the Traceflow.
+        name: Phase
+        type: string
+      - JSONPath: .spec.source.pod
+        description: The name of the source Pod.
+        name: Source-Pod
+        priority: 10
+        type: string
+      - JSONPath: .spec.destination.pod
+        description: The name of the destination Pod.
+        name: Destination-Pod
+        priority: 10
+        type: string
+      - JSONPath: .spec.destination.ip
+        description: The IP address of the destination.
+        name: Destination-IP
+        priority: 10
+        type: string
+      - JSONPath: .metadata.creationTimestamp
+        name: Age
+        type: date
+      group: ops.antrea.tanzu.vmware.com
+      names:
+        kind: Traceflow
+        plural: traceflows
+        shortNames:
+        - tf
+        singular: traceflow
+      preserveUnknownFields: false
+      scope: Cluster
+      subresources:
+        status: {}
+      validation:
+        openAPIV3Schema:
+          properties:
+            spec:
+              properties:
+                destination:
+                  oneOf:
+                  - required:
+                    - pod
+                    - namespace
+                  - required:
+                    - service
+                    - namespace
+                  - required:
+                    - ip
+                  properties:
+                    ip:
+                      format: ipv4
+                      type: string
+                    namespace:
+                      type: string
+                    pod:
+                      type: string
+                    service:
+                      type: string
+                  type: object
+                packet:
+                  properties:
+                    ipHeader:
+                      properties:
+                        flags:
+                          type: integer
+                        protocol:
+                          type: integer
+                        srcIP:
+                          format: ipv4
+                          type: string
+                        ttl:
+                          type: integer
+                      type: object
+                    transportHeader:
+                      properties:
+                        icmp:
+                          properties:
+                            id:
+                              type: integer
+                            sequence:
+                              type: integer
+                          type: object
+                        tcp:
+                          properties:
+                            dstPort:
+                              type: integer
+                            flags:
+                              type: integer
+                            srcPort:
+                              type: integer
+                          type: object
+                        udp:
+                          properties:
+                            dstPort:
+                              type: integer
+                            srcPort:
+                              type: integer
+                          type: object
+                      type: object
+                  type: object
+                source:
+                  properties:
+                    namespace:
+                      type: string
+                    pod:
+                      type: string
+                  required:
+                  - pod
+                  - namespace
+                  type: object
+              required:
+              - source
+              - destination
+              type: object
+            status:
+              properties:
+                dataplaneTag:
+                  type: integer
+                phase:
+                  type: string
+                reason:
+                  type: string
+                results:
+                  items:
+                    properties:
+                      node:
+                        type: string
+                      observations:
+                        items:
+                          properties:
+                            action:
+                              type: string
+                            component:
+                              type: string
+                            componentInfo:
+                              type: string
+                            dstMAC:
+                              type: string
+                            networkPolicy:
+                              type: string
+                            pod:
+                              type: string
+                            translatedDstIP:
+                              type: string
+                            translatedSrcIP:
+                              type: string
+                            ttl:
+                              type: integer
+                            tunnelDstIP:
+                              type: string
+                          type: object
+                        type: array
+                      role:
+                        type: string
+                      timestamp:
+                        type: integer
+                    type: object
+                  type: array
+              type: object
+          required:
+          - spec
+          type: object
+      versions:
+      - name: v1alpha1
+        served: true
+        storage: true
+    ---
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      labels:
+        app: antrea
+      name: antctl
+      namespace: kube-system
+    ---
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      labels:
+        app: antrea
+      name: antrea-agent
+      namespace: kube-system
+    ---
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      labels:
+        app: antrea
+      name: antrea-controller
+      namespace: kube-system
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      labels:
+        app: antrea
+      name: antctl
+    rules:
+    - apiGroups:
+      - controlplane.antrea.tanzu.vmware.com
+      resources:
+      - networkpolicies
+      - appliedtogroups
+      - addressgroups
+      verbs:
+      - get
+      - list
+    - apiGroups:
+      - system.antrea.tanzu.vmware.com
+      resources:
+      - controllerinfos
+      - agentinfos
+      verbs:
+      - get
+    - apiGroups:
+      - system.antrea.tanzu.vmware.com
+      resources:
+      - supportbundles
+      verbs:
+      - get
+      - post
+    - apiGroups:
+      - system.antrea.tanzu.vmware.com
+      resources:
+      - supportbundles/download
+      verbs:
+      - get
+    - nonResourceURLs:
+      - /agentinfo
+      - /addressgroups
+      - /appliedtogroups
+      - /networkpolicies
+      - /ovsflows
+      - /ovstracing
+      - /podinterfaces
+      verbs:
+      - get
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      labels:
+        app: antrea
+      name: antrea-agent
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - nodes
+      verbs:
+      - get
+      - watch
+      - list
+    - apiGroups:
+      - ""
+      resources:
+      - pods
+      - endpoints
+      - services
+      verbs:
+      - get
+      - watch
+      - list
+    - apiGroups:
+      - clusterinformation.antrea.tanzu.vmware.com
+      resources:
+      - antreaagentinfos
+      verbs:
+      - get
+      - create
+      - update
+      - delete
+    - apiGroups:
+      - controlplane.antrea.tanzu.vmware.com
+      resources:
+      - networkpolicies
+      - appliedtogroups
+      - addressgroups
+      verbs:
+      - get
+      - watch
+      - list
+    - apiGroups:
+      - authentication.k8s.io
+      resources:
+      - tokenreviews
+      verbs:
+      - create
+    - apiGroups:
+      - authorization.k8s.io
+      resources:
+      - subjectaccessreviews
+      verbs:
+      - create
+    - apiGroups:
+      - ""
+      resourceNames:
+      - extension-apiserver-authentication
+      resources:
+      - configmaps
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - ""
+      resourceNames:
+      - antrea-ca
+      resources:
+      - configmaps
+      verbs:
+      - get
+      - watch
+      - list
+    - apiGroups:
+      - ops.antrea.tanzu.vmware.com
+      resources:
+      - traceflows
+      - traceflows/status
+      verbs:
+      - get
+      - watch
+      - list
+      - update
+      - patch
+      - create
+      - delete
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      labels:
+        app: antrea
+      name: antrea-controller
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - nodes
+      - pods
+      - namespaces
+      verbs:
+      - get
+      - watch
+      - list
+    - apiGroups:
+      - networking.k8s.io
+      resources:
+      - networkpolicies
+      verbs:
+      - get
+      - watch
+      - list
+    - apiGroups:
+      - clusterinformation.antrea.tanzu.vmware.com
+      resources:
+      - antreacontrollerinfos
+      verbs:
+      - get
+      - create
+      - update
+      - delete
+    - apiGroups:
+      - clusterinformation.antrea.tanzu.vmware.com
+      resources:
+      - antreaagentinfos
+      verbs:
+      - list
+      - delete
+    - apiGroups:
+      - authentication.k8s.io
+      resources:
+      - tokenreviews
+      verbs:
+      - create
+    - apiGroups:
+      - authorization.k8s.io
+      resources:
+      - subjectaccessreviews
+      verbs:
+      - create
+    - apiGroups:
+      - ""
+      resourceNames:
+      - extension-apiserver-authentication
+      resources:
+      - configmaps
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - ""
+      resourceNames:
+      - antrea-ca
+      resources:
+      - configmaps
+      verbs:
+      - get
+      - update
+    - apiGroups:
+      - apiregistration.k8s.io
+      resourceNames:
+      - v1beta1.system.antrea.tanzu.vmware.com
+      - v1beta1.controlplane.antrea.tanzu.vmware.com
+      resources:
+      - apiservices
+      verbs:
+      - get
+      - update
+    - apiGroups:
+      - apiregistration.k8s.io
+      resourceNames:
+      - v1beta1.networking.antrea.tanzu.vmware.com
+      resources:
+      - apiservices
+      verbs:
+      - delete
+    - apiGroups:
+      - security.antrea.tanzu.vmware.com
+      resources:
+      - clusternetworkpolicies
+      verbs:
+      - get
+      - watch
+      - list
+    - apiGroups:
+      - ops.antrea.tanzu.vmware.com
+      resources:
+      - traceflows
+      - traceflows/status
+      verbs:
+      - get
+      - watch
+      - list
+      - update
+      - patch
+      - create
+      - delete
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      labels:
+        app: antrea
+      name: antctl
+      namespace: kube-system
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: antctl
+    subjects:
+    - kind: ServiceAccount
+      name: antctl
+      namespace: kube-system
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1beta1
+    kind: ClusterRoleBinding
+    metadata:
+      labels:
+        app: antrea
+      name: antrea-agent
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: antrea-agent
+    subjects:
+    - kind: ServiceAccount
+      name: antrea-agent
+      namespace: kube-system
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1beta1
+    kind: ClusterRoleBinding
+    metadata:
+      labels:
+        app: antrea
+      name: antrea-controller
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: antrea-controller
+    subjects:
+    - kind: ServiceAccount
+      name: antrea-controller
+      namespace: kube-system
+    ---
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      labels:
+        app: antrea
+      name: antrea-ca
+      namespace: kube-system
+    ---
+    apiVersion: v1
+    data:
+      antrea-agent.conf: |
+        serviceCIDR: 100.64.0.0/13
+      antrea-cni.conflist: |
+        {
+            "cniVersion":"0.3.0",
+            "name": "antrea",
+            "plugins": [
+                {
+                    "type": "antrea",
+                    "ipam": {
+                        "type": "host-local"
+                    }
+                },
+                {
+                    "type": "portmap",
+                    "capabilities": {"portMappings": true}
+                }
+            ]
+        }
+      antrea-controller.conf: |
+        # FeatureGates is a map of feature names to bools that enable or disable experimental features.
+        featureGates:
+        # Enable traceflow which provides packet tracing feature to diagnose network issue.
+        #  Traceflow: false
+
+        # Enable ClusterNetworkPolicy feature to complement K8s NetworkPolicy for cluster admins
+        # to define security policies which apply to the entire cluster.
+        #  ClusterNetworkPolicy: false
+
+        # The port for the antrea-controller APIServer to serve on.
+        # Note that if it's set to another value, the `containerPort` of the `api` port of the
+        # `antrea-controller` container must be set to the same value.
+        #apiPort: 10349
+
+        # Enable metrics exposure via Prometheus. Initializes Prometheus metrics listener.
+        #enablePrometheusMetrics: false
+
+        # Indicates whether to use auto-generated self-signed TLS certificate.
+        # If false, A Secret named "antrea-controller-tls" must be provided with the following keys:
+        #   ca.crt: <CA certificate>
+        #   tls.crt: <TLS certificate>
+        #   tls.key: <TLS private key>
+        # And the Secret must be mounted to directory "/var/run/antrea/antrea-controller-tls" of the
+        # antrea-controller container.
+        selfSignedCert: true
+    kind: ConfigMap
+    metadata:
+      annotations: {}
+      labels:
+        app: antrea
+      name: antrea-config-955ggkk72b
+      namespace: kube-system
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: antrea
+      name: antrea
+      namespace: kube-system
+    spec:
+      ports:
+      - port: 443
+        protocol: TCP
+        targetPort: api
+      selector:
+        app: antrea
+        component: antrea-controller
+    ---
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app: antrea
+        component: antrea-controller
+      name: antrea-controller
+      namespace: kube-system
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: antrea
+          component: antrea-controller
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            app: antrea
+            component: antrea-controller
+        spec:
+          containers:
+          - args:
+            - --config
+            - /etc/antrea/antrea-controller.conf
+            - --logtostderr=false
+            - --log_dir=/var/log/antrea
+            - --alsologtostderr
+            - --log_file_max_size=100
+            - --log_file_max_num=4
+            command:
+            - antrea-controller
+            env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            image: gcr.io/kubernetes-development-244305/antrea/antrea-debian:v0.9.3_vmware.1
+            imagePullPolicy: IfNotPresent
+            name: antrea-controller
+            ports:
+            - containerPort: 10349
+              name: api
+              protocol: TCP
+            readinessProbe:
+              failureThreshold: 5
+              httpGet:
+                host: 127.0.0.1
+                path: /healthz
+                port: api
+                scheme: HTTPS
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              timeoutSeconds: 5
+            resources:
+              requests:
+                cpu: 200m
+            volumeMounts:
+            - mountPath: /etc/antrea/antrea-controller.conf
+              name: antrea-config
+              readOnly: true
+              subPath: antrea-controller.conf
+            - mountPath: /var/run/antrea/antrea-controller-tls
+              name: antrea-controller-tls
+            - mountPath: /var/log/antrea
+              name: host-var-log-antrea
+          hostNetwork: true
+          nodeSelector:
+            kubernetes.io/os: linux
+          priorityClassName: system-cluster-critical
+          serviceAccountName: antrea-controller
+          tolerations:
+          - key: CriticalAddonsOnly
+            operator: Exists
+          - effect: NoSchedule
+            key: node-role.kubernetes.io/master
+          volumes:
+          - configMap:
+              name: antrea-config-955ggkk72b
+            name: antrea-config
+          - name: antrea-controller-tls
+            secret:
+              defaultMode: 256
+              optional: true
+              secretName: antrea-controller-tls
+          - hostPath:
+              path: /var/log/antrea
+              type: DirectoryOrCreate
+            name: host-var-log-antrea
+    ---
+    apiVersion: apiregistration.k8s.io/v1
+    kind: APIService
+    metadata:
+      labels:
+        app: antrea
+      name: v1beta1.controlplane.antrea.tanzu.vmware.com
+    spec:
+      group: controlplane.antrea.tanzu.vmware.com
+      groupPriorityMinimum: 100
+      service:
+        name: antrea
+        namespace: kube-system
+      version: v1beta1
+      versionPriority: 100
+    ---
+    apiVersion: apiregistration.k8s.io/v1
+    kind: APIService
+    metadata:
+      labels:
+        app: antrea
+      name: v1beta1.system.antrea.tanzu.vmware.com
+    spec:
+      group: system.antrea.tanzu.vmware.com
+      groupPriorityMinimum: 100
+      service:
+        name: antrea
+        namespace: kube-system
+      version: v1beta1
+      versionPriority: 100
+    ---
+    apiVersion: apps/v1
+    kind: DaemonSet
+    metadata:
+      labels:
+        app: antrea
+        component: antrea-agent
+      name: antrea-agent
+      namespace: kube-system
+    spec:
+      selector:
+        matchLabels:
+          app: antrea
+          component: antrea-agent
+      template:
+        metadata:
+          labels:
+            app: antrea
+            component: antrea-agent
+        spec:
+          containers:
+          - args:
+            - --config
+            - /etc/antrea/antrea-agent.conf
+            - --logtostderr=false
+            - --log_dir=/var/log/antrea
+            - --alsologtostderr
+            - --log_file_max_size=100
+            - --log_file_max_num=4
+            command:
+            - antrea-agent
+            env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            image: gcr.io/kubernetes-development-244305/antrea/antrea-debian:v0.9.3_vmware.1
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - container_liveness_probe agent
+              failureThreshold: 5
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              timeoutSeconds: 5
+            name: antrea-agent
+            ports:
+            - containerPort: 10350
+              name: api
+              protocol: TCP
+            readinessProbe:
+              failureThreshold: 5
+              httpGet:
+                host: 127.0.0.1
+                path: /healthz
+                port: api
+                scheme: HTTPS
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              timeoutSeconds: 5
+            resources:
+              requests:
+                cpu: 200m
+            securityContext:
+              privileged: true
+            volumeMounts:
+            - mountPath: /etc/antrea/antrea-agent.conf
+              name: antrea-config
+              readOnly: true
+              subPath: antrea-agent.conf
+            - mountPath: /var/run/antrea
+              name: host-var-run-antrea
+            - mountPath: /var/run/openvswitch
+              name: host-var-run-antrea
+              subPath: openvswitch
+            - mountPath: /var/lib/cni
+              name: host-var-run-antrea
+              subPath: cni
+            - mountPath: /var/log/antrea
+              name: host-var-log-antrea
+            - mountPath: /host/proc
+              name: host-proc
+              readOnly: true
+            - mountPath: /host/var/run/netns
+              mountPropagation: HostToContainer
+              name: host-var-run-netns
+              readOnly: true
+            - mountPath: /run/xtables.lock
+              name: xtables-lock
+          - command:
+            - start_ovs
+            image: gcr.io/kubernetes-development-244305/antrea/antrea-debian:v0.9.3_vmware.1
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - timeout 10 container_liveness_probe ovs
+              failureThreshold: 5
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              timeoutSeconds: 10
+            name: antrea-ovs
+            resources:
+              requests:
+                cpu: 200m
+            securityContext:
+              capabilities:
+                add:
+                - SYS_NICE
+                - NET_ADMIN
+                - SYS_ADMIN
+                - IPC_LOCK
+            volumeMounts:
+            - mountPath: /var/run/openvswitch
+              name: host-var-run-antrea
+              subPath: openvswitch
+            - mountPath: /var/log/openvswitch
+              name: host-var-log-antrea
+              subPath: openvswitch
+          hostNetwork: true
+          initContainers:
+          - command:
+            - install_cni
+            image: gcr.io/kubernetes-development-244305/antrea/antrea-debian:v0.9.3_vmware.1
+            imagePullPolicy: IfNotPresent
+            name: install-cni
+            resources:
+              requests:
+                cpu: 100m
+            securityContext:
+              capabilities:
+                add:
+                - SYS_MODULE
+            volumeMounts:
+            - mountPath: /etc/antrea/antrea-cni.conflist
+              name: antrea-config
+              readOnly: true
+              subPath: antrea-cni.conflist
+            - mountPath: /host/etc/cni/net.d
+              name: host-cni-conf
+            - mountPath: /host/opt/cni/bin
+              name: host-cni-bin
+            - mountPath: /lib/modules
+              name: host-lib-modules
+              readOnly: true
+            - mountPath: /sbin/depmod
+              name: host-depmod
+              readOnly: true
+          nodeSelector:
+            kubernetes.io/os: linux
+          priorityClassName: system-node-critical
+          serviceAccountName: antrea-agent
+          tolerations:
+          - key: CriticalAddonsOnly
+            operator: Exists
+          - effect: NoSchedule
+            operator: Exists
+          - effect: NoExecute
+            operator: Exists
+          volumes:
+          - configMap:
+              name: antrea-config-955ggkk72b
+            name: antrea-config
+          - hostPath:
+              path: /etc/cni/net.d
+            name: host-cni-conf
+          - hostPath:
+              path: /opt/cni/bin
+            name: host-cni-bin
+          - hostPath:
+              path: /proc
+            name: host-proc
+          - hostPath:
+              path: /var/run/netns
+            name: host-var-run-netns
+          - hostPath:
+              path: /var/run/antrea
+              type: DirectoryOrCreate
+            name: host-var-run-antrea
+          - hostPath:
+              path: /var/log/antrea
+              type: DirectoryOrCreate
+            name: host-var-log-antrea
+          - hostPath:
+              path: /lib/modules
+            name: host-lib-modules
+          - hostPath:
+              path: /sbin/depmod
+            name: host-depmod
+          - hostPath:
+              path: /run/xtables.lock
+              type: FileOrCreate
+            name: xtables-lock
+      updateStrategy:
+        type: RollingUpdate
+type: addons.cluster.x-k8s.io/resource-set
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    tkg.tanzu.vmware.com/addon-type: metadata/tkg
+  name: {{ .Values.clusterName }}-tkg-metadata-namespace-role
+  namespace: default
+stringData:
+  value: |
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: tkg-system-public
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      name: tkg-metadata-reader
+      namespace: tkg-system-public
+    rules:
+    - apiGroups:
+      - ""
+      resourceNames:
+      - tkg-metadata
+      - tkg-bom
+      resources:
+      - configmaps
+      verbs:
+      - get
+      - list
+      - watch
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      name: tkg-metadata-reader
+      namespace: tkg-system-public
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: tkg-metadata-reader
+    subjects:
+    - apiGroup: rbac.authorization.k8s.io
+      kind: Group
+      name: system:authenticated
+type: addons.cluster.x-k8s.io/resource-set
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    tkg.tanzu.vmware.com/addon-type: metadata/tkg
+  name: {{ .Values.clusterName }}-tkg-metadata-configmap
+  namespace: default
+stringData:
+  value: |
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: tkg-metadata
+      namespace: tkg-system-public
+    data:
+      metadata.yaml: |
+        cluster:
+          name: {{ .Values.clusterName }}
+          type: workload
+          plan: prod
+          kubernetesProvider: VMware Tanzu Kubernetes Grid
+          tkgVersion: 1.2.0-rc.2
+          infrastructure:
+            provider: aws
+        bom:
+          configmapRef:
+            name: tkg-bom
+type: addons.cluster.x-k8s.io/resource-set
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    tkg.tanzu.vmware.com/addon-type: metadata/tkg
+  name: {{ .Values.clusterName }}-tkg-metadata-bom-configmap
+  namespace: default
+stringData:
+  value: |
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: tkg-bom
+      namespace: tkg-system-public
+    data:
+      bom.yaml: |
+        release:
+          version: 1.2.0-rc.2
+        components:
+          alertmanager:
+            version: v0.20.0+vmware.1
+          antrea:
+            version: v0.9.3+vmware.1
+          cadvisor:
+            version: v0.36.0+vmware.1
+          calico_all:
+            version: v3.11.3+vmware.1
+          cloud-provider-azure:
+            version: v0.5.1+vmware.2
+          cloud_provider_vsphere:
+            version: v1.2.1+vmware.1
+          cluster-api-provider-azure:
+            version: v0.4.8-47-gfbb2d55b+vmware.1
+          cluster_api:
+            version: v0.3.9-89-g2c4ce1957+vmware.1
+          cluster_api_aws:
+            version: v0.5.5+vmware.1
+          cluster_api_vsphere:
+            version: v0.7.1+vmware.1
+          cni_plugins:
+            version: v0.8.6+vmware.4
+          configmap-reload:
+            version: v0.3.0+vmware.1
+          containerd:
+            version: v1.3.4+vmware.1
+          contour:
+            version: v1.8.1+vmware.1
+          coredns:
+            version: v1.7.0+vmware.3
+          crash-diagnostics:
+            version: v0.2.2+vmware.3
+          cri_tools:
+            version: v1.18.0+vmware.1
+          csi_attacher:
+            version: v2.0.0+vmware.2
+          csi_livenessprobe:
+            version: v1.1.0+vmware.8
+          csi_node_driver_registrar:
+            version: v1.2.0+vmware.2
+          csi_provisioner:
+            version: v1.4.0+vmware.3
+          dex:
+            version: v2.22.0+vmware.2
+          envoy:
+            version: v1.15.0+vmware.1
+          etcd:
+            version: v3.4.13+vmware.2
+          fluent-bit:
+            version: v1.5.3+vmware.1
+          gangway:
+            version: v3.2.0+vmware.2
+          grafana:
+            version: v7.0.3+vmware.1
+          harbor:
+            version: v2.0.2+vmware.1
+          jetstack_cert-manager:
+            version: v0.16.1+vmware.1
+          k8s-sidecar:
+            version: v0.1.144+vmware.1
+          kapp-controller:
+            version: v0.9.0+vmware.1
+          kokoni:
+            version: v0.2.0+vmware.3
+          kube-state-metrics:
+            version: v1.9.5+vmware.1
+          kube-vip:
+            version: v0.1.8+vmware.1
+          kube_rbac_proxy:
+            version: v0.4.1+vmware.2
+          kubernetes:
+            version: v1.19.1+vmware.2
+          kubernetes-sigs_kind:
+            version: v0.8.1-1.19.1+vmware.2
+          node_ova:
+            version: v1.19.1+vmware.2,v1.18.8+vmware.1,v1.17.11+vmware.1
+          prometheus:
+            version: v2.18.1+vmware.1
+          prometheus_node_exporter:
+            version: v0.18.1+vmware.1
+          pushgateway:
+            version: v1.2.0+vmware.1
+          sonobuoy:
+            version: v0.19.0+vmware.1
+          tanzu_tkg-cli:
+            version: v1.2.0-rc.2+vmware.1
+          tkg-connectivity:
+            version: v1.2.0+vmware.2
+          tkg_extensions:
+            version: v1.2.0+vmware.1
+          tkg_telemetry:
+            version: v1.2.0+vmware.1
+          velero:
+            version: v1.4.2+vmware.1
+          velero-plugin-for-aws:
+            version: v1.1.0+vmware.1
+          velero-plugin-for-microsoft-azure:
+            version: v1.1.0+vmware.1
+          velero-plugin-for-vsphere:
+            version: v1.0.2+vmware.1
+          vsphere_csi_driver:
+            version: v2.0.0+vmware.3
+        kubeadmConfigSpec:
+          apiVersion: kubeadm.k8s.io/v1beta2
+          kind: ClusterConfiguration
+          imageRepository: registry.tkg.vmware.run
+          kubernetesVersion: v1.19.1+vmware.2
+          etcd:
+            local:
+              dataDir: /var/lib/etcd
+              imageRepository: registry.tkg.vmware.run
+              imageTag: v3.4.13_vmware.2
+          dns:
+            type: CoreDNS
+            imageRepository: registry.tkg.vmware.run
+            imageTag: v1.7.0_vmware.3
+        kindKubeadmConfigSpec:
+        - 'kind: Cluster'
+        - 'apiVersion: kind.x-k8s.io/v1alpha4'
+        - 'kubeadmConfigPatches:'
+        - '- |'
+        - '  apiVersion: kubeadm.k8s.io/v1beta2'
+        - '  kind: ClusterConfiguration'
+        - '  imageRepository: registry.tkg.vmware.run'
+        - '  etcd:'
+        - '    local:'
+        - '      imageRepository: registry.tkg.vmware.run'
+        - '      imageTag: v3.4.13_vmware.2'
+        - '  dns:'
+        - '    type: CoreDNS'
+        - '    imageRepository: registry.tkg.vmware.run'
+        - '    imageTag: v1.7.0_vmware.3'
+        ami:
+          ap-northeast-1:
+            id: ami-0c1c113d54097e69b
+          ap-northeast-2:
+            id: ami-05392e26a65b58eb8
+          ap-south-1:
+            id: ami-05df67ff5e45e7c29
+          ap-southeast-1:
+            id: ami-031b2dbfa0d2fc68d
+          ap-southeast-2:
+            id: ami-0779b71163a6a6bae
+          eu-central-1:
+            id: ami-0c93faf83add629f9
+          eu-west-1:
+            id: ami-0577cfce6a0f5235f
+          eu-west-2:
+            id: ami-0914d2e4e7f902878
+          eu-west-3:
+            id: ami-0b583ecc7bb02f8da
+          sa-east-1:
+            id: ami-08ac0b3c42af6b211
+          us-east-1:
+            id: ami-0647eed5634b73cd5
+          us-east-2:
+            id: ami-058759e4c2532dc14
+          us-gov-east-1:
+            id: ami-029cd30e1bfa78b21
+          us-gov-west-1:
+            id: ami-063867a82fb29e9f0
+          us-west-2:
+            id: ami-0ff3c6e7c554774f2
+        azure:
+          publisher: vmware-inc
+          offer: tkg-capi
+          sku: k8s-1dot19dot1-ubuntu-1804
+          version: 2020.09.23
+          thirdPartyImage: true
+        imageConfig:
+          imageRepository: gcr.io/kubernetes-development-244305
+        images:
+          alertmanagerImage:
+            imagePath: prometheus/alertmanager
+            tag: v0.20.0_vmware.1
+          antreaImage:
+            imagePath: antrea/antrea-debian
+            tag: v0.9.3_vmware.1
+          cabpkControllerImage:
+            imagePath: cluster-api/kubeadm-bootstrap-controller
+            tag: v0.3.9-89-g2c4ce1957_vmware.1
+          cadvisorImage:
+            imagePath: prometheus/cadvisor
+            tag: v0.36.0_vmware.1
+          calicoCniImage:
+            imagePath: calico-all/cni-plugin
+            tag: v3.11.3_vmware.1
+          calicoKubecontrollerImage:
+            imagePath: calico-all/kube-controllers
+            tag: v3.11.3_vmware.1
+          calicoNodeImage:
+            imagePath: calico-all/node
+            tag: v3.11.3_vmware.1
+          calicoPodDaemonImage:
+            imagePath: calico-all/pod2daemon
+            tag: v3.11.3_vmware.1
+          capaControllerImage:
+            imagePath: cluster-api/cluster-api-aws-controller
+            tag: v0.5.5_vmware.1
+          capiControllerImage:
+            imagePath: cluster-api/cluster-api-controller
+            tag: v0.3.9-89-g2c4ce1957_vmware.1
+          capvControllerImage:
+            imagePath: cluster-api/cluster-api-vsphere-controller
+            tag: v0.7.1_vmware.1
+          capzControllerImage:
+            imagePath: cluster-api/cluster-api-azure-controller
+            tag: v0.4.8-47-gfbb2d55b_vmware.1
+          ccmAzureControllerImage:
+            imagePath: azure-cloud-controller-manager
+            tag: v0.5.1_vmware.2
+          ccmAzureNodeImage:
+            imagePath: azure-cloud-node-manager
+            tag: v0.5.1_vmware.2
+          ccmControllerImage:
+            imagePath: ccm/manager
+            tag: v1.2.1_vmware.1
+          certMgrControllerImage:
+            imagePath: cert-manager/cert-manager-controller
+            tag: v0.16.1_vmware.1
+          certMgrInjectorImage:
+            imagePath: cert-manager/cert-manager-cainjector
+            tag: v0.16.1_vmware.1
+          certMgrWebhookImage:
+            imagePath: cert-manager/cert-manager-webhook
+            tag: v0.16.1_vmware.1
+          configmapReloadImage:
+            imagePath: prometheus/configmap-reload
+            tag: v0.3.0_vmware.1
+          contourImage:
+            imagePath: contour
+            tag: v1.8.1_vmware.1
+          coredns:
+            imagePath: coredns
+            tag: v1.7.0_vmware.3
+          csiAttacherImage:
+            imagePath: csi/csi-attacher
+            tag: v2.0.0_vmware.2
+          csiControllerImage:
+            imagePath: csi/vsphere-block-csi-driver
+            tag: v2.0.0_vmware.3
+          csiLivenessProbeImage:
+            imagePath: csi/csi-livenessprobe
+            tag: v1.1.0_vmware.8
+          csiMetaDataSyncerImage:
+            imagePath: csi/volume-metadata-syncer
+            tag: v2.0.0_vmware.3
+          csiNodeDriverRegistrarImage:
+            imagePath: csi/csi-node-driver-registrar
+            tag: v1.2.0_vmware.2
+          csiProvisonerImage:
+            imagePath: csi/csi-provisioner
+            tag: v1.4.0_vmware.3
+          dexImage:
+            imagePath: dex
+            tag: v2.22.0_vmware.2
+          envoyImage:
+            imagePath: envoy
+            tag: v1.15.0_vmware.1
+          etcd:
+            imagePath: etcd
+            tag: v3.4.13_vmware.2
+          fluentBitImage:
+            imagePath: fluent-bit
+            tag: v1.5.3_vmware.1
+          gangwayImage:
+            imagePath: gangway
+            tag: v3.2.0_vmware.2
+          grafanaImage:
+            imagePath: grafana/grafana
+            tag: v7.0.3_vmware.1
+          harborChartMuseumImage:
+            imagePath: harbor/chartmuseum-photon
+            tag: v2.0.2_vmware.1
+          harborClairAdapterImage:
+            imagePath: harbor/clair-adapter-photon
+            tag: v2.0.2_vmware.1
+          harborClairImage:
+            imagePath: harbor/clair-photon
+            tag: v2.0.2_vmware.1
+          harborCoreImage:
+            imagePath: harbor/harbor-core
+            tag: v2.0.2_vmware.1
+          harborDatabaseImage:
+            imagePath: harbor/harbor-db
+            tag: v2.0.2_vmware.1
+          harborJobServiceImage:
+            imagePath: harbor/harbor-jobservice
+            tag: v2.0.2_vmware.1
+          harborLogImage:
+            imagePath: harbor/harbor-log
+            tag: v2.0.2_vmware.1
+          harborNginxImage:
+            imagePath: harbor/nginx-photon
+            tag: v2.0.2_vmware.1
+          harborNotaryServerImage:
+            imagePath: harbor/notary-server-photon
+            tag: v2.0.2_vmware.1
+          harborNotarySignerImage:
+            imagePath: harbor/notary-signer-photon
+            tag: v2.0.2_vmware.1
+          harborPortalImage:
+            imagePath: harbor/harbor-portal
+            tag: v2.0.2_vmware.1
+          harborPrepareImage:
+            imagePath: harbor/prepare
+            tag: v2.0.2_vmware.1
+          harborRedisImage:
+            imagePath: harbor/redis-photon
+            tag: v2.0.2_vmware.1
+          harborRegistryCtlImage:
+            imagePath: harbor/harbor-registryctl
+            tag: v2.0.2_vmware.1
+          harborRegistryImage:
+            imagePath: harbor/registry-photon
+            tag: v2.0.2_vmware.1
+          harborToolboxImage:
+            imagePath: harbor/harbor-toolbox
+            tag: v2.0.2_vmware.1
+          harborTrivyAdapterImage:
+            imagePath: harbor/trivy-adapter-photon
+            tag: v2.0.2_vmware.1
+          k8sSidecarImage:
+            imagePath: grafana/k8s-sidecar
+            tag: v0.1.144_vmware.1
+          kappControllerImage:
+            imagePath: kapp-controller
+            tag: v0.9.0_vmware.1
+          kcpControllerImage:
+            imagePath: cluster-api/kubeadm-control-plane-controller
+            tag: v0.3.9-89-g2c4ce1957_vmware.1
+          kindNodeImage:
+            imagePath: kind/node
+            tag: v1.19.1_vmware.2
+          kubeAPIServer:
+            imagePath: kube-apiserver
+            tag: v1.19.1_vmware.2
+          kubeControllerManager:
+            imagePath: kube-controller-manager
+            tag: v1.19.1_vmware.2
+          kubeE2e:
+            imagePath: e2e-test
+            tag: v1.19.1_vmware.2
+          kubeProxy:
+            imagePath: kube-proxy
+            tag: v1.19.1_vmware.2
+          kubeRbacProxyControllerImage:
+            imagePath: cluster-api/kube-rbac-proxy
+            tag: v0.4.1_vmware.2
+          kubeScheduler:
+            imagePath: kube-scheduler
+            tag: v1.19.1_vmware.2
+          kubeStateMetricsImage:
+            imagePath: prometheus/kube-state-metrics
+            tag: v1.9.5_vmware.1
+          kubeVipImage:
+            imagePath: kube-vip
+            tag: v0.1.8_vmware.1
+          pause:
+            imagePath: pause
+            tag: "3.2"
+          prometheusImage:
+            imagePath: prometheus/prometheus
+            tag: v2.18.1_vmware.1
+          prometheusNodeExporterImage:
+            imagePath: prometheus/prometheus_node_exporter
+            tag: v0.18.1_vmware.1
+          pushgatewayImage:
+            imagePath: prometheus/pushgateway
+            tag: v1.2.0_vmware.1
+          sonobuoyImage:
+            imagePath: sonobuoy
+            tag: v0.19.0_vmware.1
+          tanzuConnectivityBinderImage:
+            imagePath: tanzu-connectivity/tanzu-connectivity-binder
+            tag: v0.2.0_vmware.3
+          tanzuConnectivityPublisherImage:
+            imagePath: tanzu-connectivity/tanzu-connectivity-publisher
+            tag: v0.2.0_vmware.3
+          tanzuConnectivityRegistryImage:
+            imagePath: tanzu-connectivity/tanzu-connectivity-registry
+            tag: v0.2.0_vmware.3
+          tkgConnectivityOperatorImage:
+            imagePath: tkg-connectivity/tkg-connectivity-operator
+            tag: v1.2.0_vmware.2
+          tkgExtensionsTemplatesImage:
+            imagePath: tkg-extensions-templates
+            tag: v1.2.0_vmware.1
+          tkgRegistryWebhookImage:
+            imagePath: tkg-connectivity/tanzu-registry-webhook
+            tag: v1.2.0_vmware.2
+          tkgTelemetryImage:
+            imagePath: tkg-telemetry
+            tag: v1.2.0_vmware.1
+          tmcExtensionManagerImage:
+            imagePath: tmc-extension-manager
+            tag: v1.2.0_vmware.1
+          veleroDataManagerForPluginImage:
+            imagePath: velero/data-manager-for-plugin
+            tag: v1.0.2_vmware.1
+          veleroImage:
+            imagePath: velero/velero
+            tag: v1.4.2_vmware.1
+          veleroPluginForAwsImage:
+            imagePath: velero/velero-plugin-for-aws
+            tag: v1.1.0_vmware.1
+          veleroPluginForMicrosoftAzureImage:
+            imagePath: velero/velero-plugin-for-microsoft-azure
+            tag: v1.1.0_vmware.1
+          veleroPluginForVsphereImage:
+            imagePath: velero/velero-plugin-for-vsphere
+            tag: v1.0.2_vmware.1
+          veleroResticRestoreHelperImage:
+            imagePath: velero/velero-restic-restore-helper
+            tag: v1.4.2_vmware.1
+        extensions:
+          contour:
+            clusterTypes:
+            - workload
+            managedBy: user
+          dex:
+            clusterTypes:
+            - management
+            managedBy: user
+          fluent-bit:
+            clusterTypes:
+            - workload
+            managedBy: user
+          gangway:
+            clusterTypes:
+            - workload
+            managedBy: user
+          grafana:
+            clusterTypes:
+            - workload
+            managedBy: user
+          harbor:
+            clusterTypes:
+            - workload
+            managedBy: user
+          prometheus:
+            clusterTypes:
+            - workload
+            managedBy: user
+type: addons.cluster.x-k8s.io/resource-set
+---
+apiVersion: addons.cluster.x-k8s.io/v1alpha3
+kind: ClusterResourceSet
+metadata:
+  annotations:
+    tkg.tanzu.vmware.com/addon-type: metadata/tkg
+  labels:
+    cluster.x-k8s.io/cluster-name: {{ .Values.clusterName }}
+  name: {{ .Values.clusterName }}-tkg-metadata
+  namespace: default
+spec:
+  clusterSelector:
+    matchLabels:
+      tkg.tanzu.vmware.com/cluster-name: {{ .Values.clusterName }}
+  resources:
+  - kind: Secret
+    name: {{ .Values.clusterName }}-tkg-metadata-namespace-role
+  - kind: Secret
+    name: {{ .Values.clusterName }}-tkg-metadata-configmap
+  - kind: Secret
+    name: {{ .Values.clusterName }}-tkg-metadata-bom-configmap
+  strategy: ApplyOnce
+---
+apiVersion: addons.cluster.x-k8s.io/v1alpha3
+kind: ClusterResourceSet
+metadata:
+  labels:
+    cluster.x-k8s.io/cluster-name: {{ .Values.clusterName }}
+  name: {{ .Values.clusterName }}-default-storage-class
+  namespace: default
+spec:
+  clusterSelector:
+    matchLabels:
+      tkg.tanzu.vmware.com/cluster-name: {{ .Values.clusterName }}
+  resources:
+  - kind: Secret
+    name: {{ .Values.clusterName }}-default-storage-class
+  strategy: ApplyOnce
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.clusterName }}-default-storage-class
+  namespace: default
+stringData:
+  value: |
+    kind: StorageClass
+    apiVersion: storage.k8s.io/v1
+    metadata:
+      name: default
+      annotations:
+        storageclass.kubernetes.io/is-default-class: "true"
+    provisioner: kubernetes.io/aws-ebs
+type: addons.cluster.x-k8s.io/resource-set

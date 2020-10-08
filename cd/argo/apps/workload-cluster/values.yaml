@@ -1,1 +1,2 @@
 clusterName: wlc
+workersPerPool: 1

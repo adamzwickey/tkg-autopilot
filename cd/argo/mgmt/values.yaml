@@ -13,4 +13,5 @@ dex:
   wlClientSecret1:  topsecret # This must be overridden
 workload1:
   clusterName: aws-workload1
+  workersPerPool: 2
   
