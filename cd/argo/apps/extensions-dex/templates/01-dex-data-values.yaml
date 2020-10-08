@@ -18,6 +18,7 @@ stringData:
       config:
         web:
           http: 0.0.0.0:5555
+          test: value
         connector: oidc
         oidc:
           CLIENT_ID: {{ .Values.clientId }}
