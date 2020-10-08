@@ -5,9 +5,13 @@ configs:
     argocdServerAdminPassword: xxxxxx
 installCRDs: false
 server:
+  service:
+    type: LoadBalancer
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: argo.mgmt.tanzu.zwickey.net
   certificate:
     enabled: true
     domain: argo.mgmt.tanzu.zwickey.net
     issuer:
       name: letsencrypt-contour-cluster-issuer
-      kind: ClusterIssuer    
+      kind: ClusterIssuer

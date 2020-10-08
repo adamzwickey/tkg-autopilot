@@ -61,20 +61,6 @@ aws s3 cp $HOME/.kube/config s3://tkg-autopilot/kubeconfig
 
 cd /tkg-autopilot
 kubectl apply -f manifests/mgmt/cluster-issuer.yaml
-# Install Ingress
-kubectl apply -f extensions/tmc-extension-manager.yaml
-kubectl apply -f extensions/kapp-controller.yaml
-
-kubectl apply -f extensions/ingress/contour/namespace-role.yaml
-kubectl create secret generic contour-data-values --from-file=values.yaml=manifests/mgmt/contour-data-values.yaml -n tanzu-system-ingress
-kubectl apply -f extensions/ingress/contour/contour-extension.yaml
-
-#Wait for SVC to be ready with DNS
-while kubectl get svc envoy -n tanzu-system-ingress | grep elb.amazonaws.com ; [ $? -ne 0 ]; do
-	echo envoy service is not yet ready
-	sleep 5s
-done
-
 # Install Exernal DNS
 helm repo add bitnami https://charts.bitnami.com/bitnami
 yq write manifests/mgmt/values-external-dns.yaml -i "aws.credentials.secretKey" $(yq r $VARS_YAML aws.secretKey)
@@ -87,7 +73,6 @@ while kubectl get po -l app.kubernetes.io/name=external-dns -n tanzu-system-ingr
 	echo external-dns is not yet ready
 	sleep 5s
 done
-kubectl annotate service envoy "external-dns.alpha.kubernetes.io/hostname=$(yq r $VARS_YAML tkg.mgmt.ingress)." -n tanzu-system-ingress --overwrite
 
 # Install ArgoCD
 kubectl create ns argocd
@@ -98,13 +83,12 @@ export ARGOCD_PWD_ENCODE=$(htpasswd -nbBC 10 "" $ARGOCD_PWD | tr -d ':\n' | sed 
 echo "Encoded argopwd: $ARGOCD_PWD_ENCODE"
 yq write manifests/mgmt/values-argo.yaml -i "configs.secret.argocdServerAdminPassword" $ARGOCD_PWD_ENCODE
 yq write manifests/mgmt/values-argo.yaml -i "server.certificate.domain" $(yq r $VARS_YAML tkg.mgmt.argo.ingress)
+yq write manifests/mgmt/values-argo.yaml -i 'server.service.annotations."external-dns.alpha.kubernetes.io/hostname"' $(yq r $VARS_YAML tkg.mgmt.argo.ingress) 
 helm install argocd argo/argo-cd -f manifests/mgmt/values-argo.yaml  -n argocd
-yq write manifests/mgmt/argo-http-proxy.yaml -i "spec.virtualhost.fqdn" $(yq r $VARS_YAML tkg.mgmt.argo.ingress)
-kubectl apply -f manifests/mgmt/argo-http-proxy.yaml
 
 #Wait for cert to be ready, which means we should be able to access
-while kubectl get certificate -n argocd argocd-server | grep True ; [ $? -ne 0 ]; do
-	echo Argo Ingress is not yet ready
+while kubectl get po -n argocd argocd-server | grep Running ; [ $? -ne 0 ]; do
+	echo Argo Server is not yet ready
 	sleep 5s
 done
 
@@ -121,7 +105,8 @@ kubectl config set-context $MGMT_CLUSTER-argocd-token-user@$MGMT_CLUSTER \
 # Add the config setup with the service account
 argocd login $(yq r $VARS_YAML tkg.mgmt.argo.ingress) \
   --username admin \
-  --password $ARGOCD_PWD
+  --password $ARGOCD_PWD \
+  --insecure  #Need this as we don't have a signed cert yet
 argocd cluster add $MGMT_CLUSTER-argocd-token-user@$MGMT_CLUSTER
 
 # Add Mgmt Cluster App of Apps
@@ -134,3 +119,21 @@ argocd app create mgmt-app-of-apps \
   --path cd/argo/mgmt \
   --helm-set ns=adamz \
   --helm-set server=$SERVER 
+
+
+  # Install Ingress
+# kubectl apply -f extensions/tmc-extension-manager.yaml
+# kubectl apply -f extensions/kapp-controller.yaml
+
+# kubectl apply -f extensions/ingress/contour/namespace-role.yaml
+# kubectl create secret generic contour-data-values --from-file=values.yaml=manifests/mgmt/contour-data-values.yaml -n tanzu-system-ingress
+# kubectl apply -f extensions/ingress/contour/contour-extension.yaml
+
+#Wait for SVC to be ready with DNS
+# while kubectl get svc envoy -n tanzu-system-ingress | grep elb.amazonaws.com ; [ $? -ne 0 ]; do
+# 	echo envoy service is not yet ready
+# 	sleep 5s
+# done
+
+
+#kubectl annotate service envoy "external-dns.alpha.kubernetes.io/hostname=$(yq r $VARS_YAML tkg.mgmt.ingress)." -n tanzu-system-ingress --overwrite
