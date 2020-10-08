@@ -34,11 +34,24 @@ spec:
               - tkg-extensions/common
               - tkg-extensions/authentication/dex
             inline:
+              container-port.yaml: |
+                  #@ load("@ytt:overlay", "overlay")
+                  #@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "dex"}})
+                  ---
+                  spec:
+                    template:
+                      spec:
+                        containers:
+                        #@overlay/match by=overlay.subset({"name": "dex"})
+                        - name: dex
+                          ports:
+                          #@overlay/append
+                          - name: http
+                            containerPort: 5555
+                            protocol: TCP
               pathsFrom:
                 - secretRef:
                     name: dex-data-values
-                - secretRef:
-                    name: dex-data-values-custom
       deploy:
         - kapp:
             rawOptions: ["--wait-timeout=5m"]
