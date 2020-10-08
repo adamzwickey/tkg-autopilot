@@ -22,6 +22,8 @@ spec:
           value: {{ .Values.dex.clientId }}
         - name: clientSecret
           value: {{ .Values.dex.clientSecret }}
+        - name: clientSecret
+          value: {{ .Values.dex.ingressFQDN }}
         - name: idpUrl
           value: {{ .Values.dex.idpUrl }}
         - name: wlName1
