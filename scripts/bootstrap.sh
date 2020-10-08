@@ -120,11 +120,6 @@ argocd app create mgmt-app-of-apps \
   --helm-set ns=adamz \
   --helm-set server=$SERVER 
 
-
-  # Install Ingress
-# kubectl apply -f extensions/tmc-extension-manager.yaml
-# kubectl apply -f extensions/kapp-controller.yaml
-
 # kubectl apply -f extensions/ingress/contour/namespace-role.yaml
 # kubectl create secret generic contour-data-values --from-file=values.yaml=manifests/mgmt/contour-data-values.yaml -n tanzu-system-ingress
 # kubectl apply -f extensions/ingress/contour/contour-extension.yaml

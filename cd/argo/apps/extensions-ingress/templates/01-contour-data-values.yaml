@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: contour-data-values
+  namespace: tanzu-system-ingress
+type: Opaque
+data:
+  values.yaml: |
+    #@data/values
+    #@overlay/match-child-defaults missing_ok=True
+    ---
+    infrastructure_provider: "aws"
+    contour:
+      image:
+        repository: projects-stg.registry.vmware.com/tkg
+    envoy:
+      service:
+        type: LoadBalancer
+      image:
+        repository: projects-stg.registry.vmware.com/tkg
