@@ -21,6 +21,6 @@ spec:
         - name: clusterName
           value: {{ .Values.workload1.clusterName }}
         - name: workersPerPool
-          value: {{ .Values.workload1.workersPerPool }}
+          value: "{{ .Values.workload1.workersPerPool }}"
           
           
