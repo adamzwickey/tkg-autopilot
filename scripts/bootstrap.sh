@@ -117,18 +117,6 @@ argocd app create mgmt-app-of-apps \
   --dest-namespace default \
   --sync-policy automated \
   --path cd/argo/mgmt \
-  --helm-set ns=adamz \
-  --helm-set server=$SERVER 
-
-# kubectl apply -f extensions/ingress/contour/namespace-role.yaml
-# kubectl create secret generic contour-data-values --from-file=values.yaml=manifests/mgmt/contour-data-values.yaml -n tanzu-system-ingress
-# kubectl apply -f extensions/ingress/contour/contour-extension.yaml
-
-#Wait for SVC to be ready with DNS
-# while kubectl get svc envoy -n tanzu-system-ingress | grep elb.amazonaws.com ; [ $? -ne 0 ]; do
-# 	echo envoy service is not yet ready
-# 	sleep 5s
-# done
-
-
-#kubectl annotate service envoy "external-dns.alpha.kubernetes.io/hostname=$(yq r $VARS_YAML tkg.mgmt.ingress)." -n tanzu-system-ingress --overwrite
+  --helm-set server=$SERVER \
+  --helm-set dex.clientSecret=$(yq r $VARS_YAML tkg.mgmt.dex.oidcSecret) \
+  --helm-set dex.wlClientSecret1=$(yq r $VARS_YAML tkg.mgmt.dex.wlClientSecret)

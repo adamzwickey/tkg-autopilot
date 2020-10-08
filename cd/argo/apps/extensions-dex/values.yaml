@@ -1,0 +1,6 @@
+clientId: 1234
+clientSecret: topSecret
+idpUrl: https://idp.com
+wlName1:  wl1
+gangway1: https://workload1.com
+wlClientSecret1:  tepsecret

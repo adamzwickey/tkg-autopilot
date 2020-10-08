@@ -3,4 +3,11 @@ targetRevision: HEAD
 server: https://kubernetes.api.lb:6443  # This must be overridden
 ingress:
   ingressFQDN: '*.mgmt.tanzu.zwickey.net'
+dex:
+  clientId: 0oaagkq37j5IEbOqe4x6
+  clientSecret: topSecret # This must be overridden
+  idpUrl: https://dev-104945.okta.com/oauth2/default
+  wlName1:  aws-workload1
+  gangway1: gangway.workload1.tanzu.zwickey.net
+  wlClientSecret1:  topsecret # This must be overridden
   
