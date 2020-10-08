@@ -45,7 +45,7 @@ spec:
                         #@overlay/match by=overlay.subset({"name": "dex"})
                         - name: dex
                           ports:
-                          #@overlay/append
+                          #@overlay/insert
                           - name: http
                             containerPort: 5555
                             protocol: TCP
