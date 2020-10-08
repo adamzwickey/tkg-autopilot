@@ -40,7 +40,7 @@ spec:
                   metadata:
                     #@overlay/match-child-defaults missing_ok=True
                     annotations: 
-                      test: test
+                      external-dns.alpha.kubernetes.io/hostname: "*.mgmt.tanzu.zwickey.net."
 
               pathsFrom:
                 - secretRef:
