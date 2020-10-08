@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dex-data-values-custom
+  namespace: tanzu-system-auth
+type: Opaque
+stringData:
+  values.yaml: |
+    #@ load("@ytt:overlay", "overlay")
+    #@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "dex"}})
+    ---
+    spec:
+      template:
+        spec:
+          containers:
+          #@overlay/match by=overlay.subset({"name": "dex"})
+          - name: dex
+            ports:
+            #@overlay/append
+            - name: http
+              containerPort: 5555
+              protocol: TCP

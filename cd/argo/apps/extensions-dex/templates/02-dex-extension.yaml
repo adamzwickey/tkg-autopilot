@@ -37,6 +37,8 @@ spec:
               pathsFrom:
                 - secretRef:
                     name: dex-data-values
+                - secretRef:
+                    name: dex-data-values-custom
       deploy:
         - kapp:
             rawOptions: ["--wait-timeout=5m"]
