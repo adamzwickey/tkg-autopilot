@@ -17,5 +17,5 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: dex
+          serviceName: dex-http
           servicePort: 5555
