@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: contour-data-values
+  name: dex-data-values
   namespace: tanzu-system-auth
 type: Opaque
 stringData:
