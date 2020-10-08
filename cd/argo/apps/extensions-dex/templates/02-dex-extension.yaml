@@ -26,7 +26,7 @@ spec:
       serviceAccountName: dex-extension-sa
       fetch:
         - image:
-            url: registry.tkg.vmware.run/tkg-extensions-templates:v1.2.0_vmware.1
+            url: projects-stg.registry.vmware.com/tkg-extensions-templates:v1.2.0_vmware.1
       template:
         - ytt:
             ignoreUnknownComments: true
