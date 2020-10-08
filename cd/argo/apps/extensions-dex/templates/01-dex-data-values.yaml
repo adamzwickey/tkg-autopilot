@@ -11,6 +11,10 @@ stringData:
     ---
     infrastructure_provider: "aws"
     dex:
+      image:
+        repository: projects-stg.registry.vmware.com/tkg
+      service:
+        type: ClusterIP
       config:
         connector: oidc
         oidc:
