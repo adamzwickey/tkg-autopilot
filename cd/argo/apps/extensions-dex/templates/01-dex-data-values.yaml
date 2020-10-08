@@ -14,7 +14,7 @@ stringData:
       image:
         repository: projects-stg.registry.vmware.com/tkg
       service:
-        type: ClusterIP
+        type: NodePort
       config:
         connector: oidc
         oidc:
