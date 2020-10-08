@@ -34,5 +34,6 @@ stringData:
     #! Deploy dex first and update sample-elb with real name once dex service loadbalancer is created, dnsNames is optional.
     dns:
       aws:
-        DEX_SVC_LB_HOSTNAME: sample-elb
-        dnsNames: []
+        DEX_SVC_LB_HOSTNAME: {{ .Values.ingressFQDN }}
+        dnsNames:
+        - {{ .Values.ingressFQDN }}
