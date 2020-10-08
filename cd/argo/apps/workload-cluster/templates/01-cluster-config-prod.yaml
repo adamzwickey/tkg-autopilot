@@ -30,9 +30,6 @@ metadata:
   name: {{ .Values.clusterName }}
   namespace: default
 spec:
-  additionalTags:
-    Environment: null
-    Team: null
   bastion:
     enabled: false
   networkSpec:
