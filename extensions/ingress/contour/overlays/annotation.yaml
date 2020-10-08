@@ -1,8 +1,0 @@
-#@ load("@ytt:overlay", "overlay")
-
-#@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "envoy"}})
----
-metadata:
-  #@overlay/match 
-  annotations: 
-    external-dns.alpha.kubernetes.io/hostname: "*.mgmt.tanzu.zwickey.net."
