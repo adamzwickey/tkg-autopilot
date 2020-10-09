@@ -31,7 +31,7 @@ spec:
     hosts:
       - {{ .Values.gangwayFQDN }}
   rules:
-  - host: {{ .Values.gangwayFQDN }}
+  - host: example.com
     http:
       paths:
       - path: /dummy
