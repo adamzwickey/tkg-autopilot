@@ -19,24 +19,25 @@ spec:
     services:
     - name: kuard
       port: 80
-# ---
-# apiVersion: extensions/v1beta1
-# kind: Ingress
-# metadata:
-#   name: dummy-ingress
-#   namespace: tanzu-system-auth
-#   annotations:
-#     cert-manager.io/cluster-issuer: "letsencrypt-contour-cluster-issuer"
-# spec:
-#   tls:
-#   - secretName: gangway-https-secret
-#     hosts:
-#       - {{ .Values.gangwayFQDN }}
-#   rules:
-#   - host: example.com
-#     http:
-#       paths:
-#       - path: /dummy
-#         backend:
-#           serviceName: dummy
-#           servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: dummy-ingress
+  namespace: tanzu-system-auth
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-contour-cluster-issuer"
+    external-dns.alpha.kubernetes.io/hostname: ""
+spec:
+  tls:
+  - secretName: gangway-https-secret
+    hosts:
+      - {{ .Values.gangwayFQDN }}
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /dummy
+        backend:
+          serviceName: dummy
+          servicePort: 80
