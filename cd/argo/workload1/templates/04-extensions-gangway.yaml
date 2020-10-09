@@ -23,7 +23,7 @@ spec:
         - name: dexFQDN
           value: "{{ .Values.gangway.dexFQDN }}"
         - name: apiServer
-          value: "{{ .Values.server }}"
+          value: "{{ .Values.serverFQDN }}"
         - name: sessionKey
           value: "{{ .Values.gangway.sessionKey }}"
         - name: clientSecret
