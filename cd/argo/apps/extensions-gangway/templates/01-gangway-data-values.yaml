@@ -29,4 +29,4 @@ stringData:
 
     dex:
       ca: |
-        xxxxxx
+        {{ .Values.dexCA }}

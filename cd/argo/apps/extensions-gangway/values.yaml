@@ -4,3 +4,7 @@ apiServer: https://apiserver.com
 sessionKey: 123123123asdasdasd
 clientSecret: topsecret
 gangwayFQDN: gangway.example.com
+dexCA: |
+  -----BEGIN CERTIFICATE-----
+  ...cert...
+  -----END CERTIFICATE-----

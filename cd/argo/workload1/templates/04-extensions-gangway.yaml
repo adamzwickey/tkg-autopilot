@@ -30,3 +30,5 @@ spec:
           value: "{{ .Values.gangway.clientSecret }}"
         - name: gangwayFQDN
           value: "{{ .Values.gangway.ingress }}"
+        - name: dexCA
+          value: "{{ .Values.gangway.dexCA }}"
