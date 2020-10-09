@@ -120,4 +120,4 @@ argocd app create mgmt-app-of-apps \
   --helm-set server=$SERVER \
   --helm-set dex.clientSecret=$(yq r $VARS_YAML tkg.mgmt.dex.oidcSecret) \
   --helm-set dex.wlClientSecret1=$(yq r $VARS_YAML tkg.mgmt.dex.wlClientSecret) \
-  --helm-set argo.pw=$(yq r $VARS_YAML tkg.mgmt.argo.pwd)
+  --helm-set argo.pw="$(yq r $VARS_YAML tkg.mgmt.argo.pwd)"
