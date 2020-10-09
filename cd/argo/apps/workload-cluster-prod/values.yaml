@@ -5,7 +5,4 @@ dexFQDN: example.com
 argoFQDN: example.com
 argoPwd: topsecret
 wlClientSecret1: topsecret
-dexCA: |
-  -----BEGIN CERTIFICATE-----
-  ...cert...
-  -----END CERTIFICATE-----
+dexCA: 123123asdasd
