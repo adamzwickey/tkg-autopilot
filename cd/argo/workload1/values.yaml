@@ -9,7 +9,7 @@ ingress:
 clusterName: aws-workload1
 gangway:
   dexFQDN: dex.mgmt.tanzu.zwickey.net
-  sessionKey: AJSNBxzHSSxSJsqUe5oAJLVmrRvFzMrFYAnyMpo8+uo=
+  sessionKey: b97c55a5b2c23abc33c406cb1da6ea8c
   clientSecret: c-secret # This must be overridden 
   ingress: gangway.workload1.tanzu.zwickey.net
 aws:
