@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: extensions-dex
+  name: mgmt-extensions-dex
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
