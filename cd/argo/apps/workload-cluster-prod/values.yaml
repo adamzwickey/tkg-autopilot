@@ -1,2 +1,5 @@
 clusterName: wlc
 workersPerPool: "1"
+dexFQDN: example.com
+argoFQDN: example.com
+argoPwd: topsecret

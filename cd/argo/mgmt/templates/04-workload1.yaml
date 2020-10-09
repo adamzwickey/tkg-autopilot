@@ -22,5 +22,11 @@ spec:
           value: {{ .Values.workload1.clusterName }}
         - name: workersPerPool
           value: "{{ .Values.workload1.workersPerPool }}"
+        - name: dexFQDN
+          value: "{{ .Values.dex.ingressFQDN }}"
+        - name: argoFQDN
+          value: "{{ .Values.argo.ingress }}"
+        - argoPwd: workersPerPool
+          value: "{{ .Values.argo.pwd }}"
           
           
