@@ -27,7 +27,7 @@ metadata:
   namespace: tanzu-system-auth
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-contour-cluster-issuer"
-    external-dns.alpha.kubernetes.io/hostname: ""
+    external-dns.alpha.kubernetes.io/hostname: "example.com"
 spec:
   tls:
   - secretName: gangway-https-secret
