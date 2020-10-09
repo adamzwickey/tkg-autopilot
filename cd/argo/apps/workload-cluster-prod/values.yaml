@@ -1,4 +1,5 @@
 clusterName: wlc
+mgmtClusterName: mgmt
 workersPerPool: "1"
 dexFQDN: example.com
 argoFQDN: example.com

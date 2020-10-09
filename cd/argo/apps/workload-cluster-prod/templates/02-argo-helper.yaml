@@ -41,5 +41,6 @@ spec:
           - "{{ .Values.clusterName }}"
           - "{{ .Values.argoFQDN }}"
           - "{{ .Values.argoPwd }}"
+          - "{{ .Values.mgmtClusterName }}"
       restartPolicy: Never
       serviceAccountName: tkgtransitioner

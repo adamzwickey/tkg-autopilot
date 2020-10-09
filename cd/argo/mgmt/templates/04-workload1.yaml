@@ -20,6 +20,8 @@ spec:
       parameters:
         - name: clusterName
           value: {{ .Values.workload1.clusterName }}
+        - name: mgmtClusterName
+          value: {{ .Values.mgmtClusterName }}
         - name: workersPerPool
           value: "{{ .Values.workload1.workersPerPool }}"
         - name: dexFQDN
