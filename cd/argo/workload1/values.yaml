@@ -6,9 +6,31 @@ ns: testing
 ingress:
   ingressFQDN: '*.workload1.tanzu.zwickey.net'
   email: azwickey@gmail.com
+clusterName: aws-workload1
+gangway:
+  dexFQDN: dex.mgmt.tanzu.zwickey.net
+  sessionKey: asdasd
+  clientSecret: c-secret # This must be overridden
+  ingress: gangway.workload1.tanzu.zwickey.net
+  ca: |
+    xxxxx
 aws:
   credentials:
     accessKey: AKIAJJLAD2LEFJJIEOBA
     secretKey: abc12345 # This must be overridden (or changed later in UI)
   region: us-east-2
   txtOwnerId: Z10216462Y3G2KQ1H8ATW
+
+
+        - name: dexFQDN
+          value: "{{ .Values.ingress.ingressFQDN }}"
+        - name: apiServer
+          value: "{{ .Values.ingress.email }}"
+        - name: sessionKey
+          value: "{{ .Values.ingress.email }}"
+        - name: clientSecret
+          value: "{{ .Values.ingress.email }}"
+        - name: ingressFQDN
+          value: "{{ .Values.ingress.email }}"
+        - name: dexCA
+          value: "{{ .Values.ingress.email }}"

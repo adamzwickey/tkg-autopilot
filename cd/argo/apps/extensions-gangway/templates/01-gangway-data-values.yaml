@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gangway-data-values
+  namespace: tanzu-system-auth
+type: Opaque
+stringData:
+  values.yaml: |
+    #@data/values
+    #@overlay/match-child-defaults missing_ok=True
+    ---
+    infrastructure_provider: "aws"
+    gangway:
+      config:
+        clusterName: {{ .Values.clusterName }}
+        DEX_SVC_LB_HOSTNAME: {{ .Values.dexFQDN }}
+        clientID: {{ .Values.clusterName }}
+        APISERVER_URL: {{ .Values.apiServer }}
+      secret:
+        sessionKey: {{ .Values.sessionKey }}
+        clientSecret: {{ .Values.clientSecret }}
+    dns:
+      aws:
+        GANGWAY_SVC_LB_HOSTNAME: {{ .Values.gangwayFQDN }}
+
+    dex:
+      ca: |
+      {{ .Values.dexCA }}

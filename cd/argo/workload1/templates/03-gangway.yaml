@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: workload1-extensions-gangway
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: default
+    server: {{ .Values.server }}
+  project: default
+  syncPolicy:
+    automated: {}
+  source:
+    path: cd/argo/apps/extensions-ingress
+    repoURL: {{ .Values.repoURL }}
+    targetRevision: {{ .Values.targetRevision }}
+    helm:
+      parameters:
+        - name: clusterName
+          value: "{{ .Values.clusterName }}"
+        - name: dexFQDN
+          value: "{{ .Values.gangway.dexFQDN }}"
+        - name: apiServer
+          value: "{{ .Values.server }}"
+        - name: sessionKey
+          value: "{{ .Values.gangway.sessionKey }}"
+        - name: clientSecret
+          value: "{{ .Values.gangway.clientSecret }}"
+        - name: gangwayFQDN
+          value: "{{ .Values.gangway.ingress }}"
+        - name: dexCA
+          value: "{{ .Values.gangway.ca }}"

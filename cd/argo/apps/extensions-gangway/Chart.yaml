@@ -1,0 +1,5 @@
+apiVersion: v1
+appVersion: "1.0"
+description: Extensions Gangway
+name: extensions-gangway
+version: 0.1.0
