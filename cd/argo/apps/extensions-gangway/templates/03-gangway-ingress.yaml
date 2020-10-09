@@ -1,0 +1,19 @@
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: gangway-https-ingress
+  namespace: tanzu-system-auth
+spec:
+  virtualhost:
+    fqdn: gangway.workload2.tanzu.zwickey.net
+    tls:
+      passthrough: true
+  tcpproxy:
+    services:
+    - name: gangwaysvc
+      port: 443
+  routes:
+  - match: /
+    services:
+    - name: kuard
+      port: 80
