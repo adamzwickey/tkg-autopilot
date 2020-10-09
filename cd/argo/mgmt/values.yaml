@@ -6,7 +6,7 @@ ingress:
   email: azwickey@gmail.com
 argo:
   ingress: argo.mgmt.tanzu.zwickey.net
-  pwd: topsecret # This must be overridden
+  pwd: "topsecret" # This must be overridden
 dex:
   ingressFQDN: dex.mgmt.tanzu.zwickey.net
   clientId: 0oaagkq37j5IEbOqe4x6
