@@ -1,8 +1,14 @@
 repoURL: https://gitlab.com/azwickey/tkg-autopilot.git
+bitnamiRepoURL: https://github.com/bitnami/charts.git
 targetRevision: HEAD
 server: https://kubernetes.api.lb:6443  # This must be overridden
 ns: testing
 ingress:
   ingressFQDN: '*.workload1.tanzu.zwickey.net'
   email: azwickey@gmail.com
-  
+aws:
+  credentials:
+    accessKey: AKIAJJLAD2LEFJJIEOBA
+    secretKey: 12345 # This must be overridden (or changed later in UI)
+  region: us-east-2
+  txtOwnerId: Z10216462Y3G2KQ1H8ATW
