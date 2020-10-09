@@ -17,7 +17,7 @@ dex:
   wlName1:  aws-workload1
   gangway1: gangway.workload1.tanzu.zwickey.net
   wlClientSecret1:  topsecret # This must be overridden
-  ca: 123456asdef
+  ca: 123456asdef  #Not sure how to automate yet....
 workload1:
   clusterName: aws-workload1
   workersPerPool: "2"
