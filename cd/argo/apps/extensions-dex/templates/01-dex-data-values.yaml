@@ -23,6 +23,9 @@ stringData:
           CLIENT_ID: {{ .Values.clientId }}
           CLIENT_SECRET: {{ .Values.clientSecret }}
           issuer: {{ .Values.idpUrl }}
+          insecureEnableGroups: true
+          getUserInfo: true
+          scopes: ["profile", "email", "groups"]
         #! Deploy dex first with dummy staticClients. Once gangway is installed in workload cluster, update static clients with gangway information
         #@overlay/replace
         staticClients:
