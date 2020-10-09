@@ -22,6 +22,8 @@ spec:
           value: {{ .Values.workload1.clusterName }}
         - name: mgmtClusterName
           value: {{ .Values.mgmtClusterName }}
+        - name: wlClientSecret1
+          value: {{ .Values.dex.wlClientSecret1 }}
         - name: workersPerPool
           value: "{{ .Values.workload1.workersPerPool }}"
         - name: dexFQDN
@@ -30,5 +32,7 @@ spec:
           value: "{{ .Values.argo.ingress }}"
         - name: argoPwd
           value: "{{ .Values.argo.pwd }}"
+        - name: dexCA
+          value: "{{ .Values.dex.ca }}"
           
           
