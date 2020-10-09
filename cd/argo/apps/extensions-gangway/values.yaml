@@ -1,6 +1,6 @@
 clusterName: wlc
 dexFQDN: dex.example.com
-apiServer: https://apiserver.com
+apiServer: apiserver.com
 sessionKey: 123123123asdasdasd
 clientSecret: topsecret
 gangwayFQDN: gangway.example.com
