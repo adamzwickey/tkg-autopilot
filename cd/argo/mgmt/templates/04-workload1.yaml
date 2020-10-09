@@ -26,7 +26,7 @@ spec:
           value: "{{ .Values.dex.ingressFQDN }}"
         - name: argoFQDN
           value: "{{ .Values.argo.ingress }}"
-        - argoPwd: argoPwd
+        - name: argoPwd
           value: "{{ .Values.argo.pwd }}"
           
           
