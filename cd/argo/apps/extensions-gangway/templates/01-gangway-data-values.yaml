@@ -21,6 +21,8 @@ stringData:
       secret:
         sessionKey: {{ .Values.sessionKey }}
         clientSecret: {{ .Values.clientSecret }}
+      service:
+        type: NodePort
     dns:
       aws:
         GANGWAY_SVC_LB_HOSTNAME: {{ .Values.gangwayFQDN }}
