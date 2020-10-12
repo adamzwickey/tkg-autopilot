@@ -41,13 +41,16 @@ sudo yum install httpd-tools -y  #used for Arco admin PWD
 
 echo "Done with pre-reqs"
 
+export REPO=REPO_VAR
+export BUCKET=BUCKET_VAR
+
 echo "***********************"
 echo "Cloning bootstrap scripts"
 echo "***********************"
 # pull repo
-git clone https://gitlab.com/azwickey/tkg-autopilot.git
+git clone $REPO.git
 # run script
 cd tkg-autopilot/
 export HOME=/root
-source ./scripts/bootstrap.sh
+source ./scripts/bootstrap.sh $REPO $BUCKET
 

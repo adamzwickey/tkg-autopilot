@@ -3,7 +3,7 @@ echo "Bootstrapping TKG!!!!"
 
 #Pull down assets from S3 bucket
 mkdir assets
-aws s3 sync s3://tkg-autopilot assets   # This needs to be externalized
+aws s3 sync s3://$2 assets   # This needs to be externalized
 VARS_YAML=/tkg-autopilot/assets/vars.yaml
 echo config YAML:
 cat $VARS_YAML
@@ -55,8 +55,8 @@ cat $HOME/.tkg/config.yaml
 MGMT_PLAN=$(yq r $VARS_YAML tkg.mgmt.plan)
 tkg init -i aws -p $MGMT_PLAN --ceip-participation false --name $(yq r $VARS_YAML tkg.mgmt.name) --cni antrea -v 8
 # once created we'll upload kube and tkg config files for use in local workstation if needed
-aws s3 cp $HOME/.tkg/config.yaml s3://tkg-autopilot/config.yaml  
-aws s3 cp $HOME/.kube/config s3://tkg-autopilot/kubeconfig  
+aws s3 cp $HOME/.tkg/config.yaml s3://$2/config.yaml  
+aws s3 cp $HOME/.kube/config s3://$2/kubeconfig  
 
 
 cd /tkg-autopilot
@@ -112,7 +112,7 @@ argocd cluster add $MGMT_CLUSTER-argocd-token-user@$MGMT_CLUSTER
 # Add Mgmt Cluster App of Apps
 SERVER=$(argocd cluster list | grep $MGMT_CLUSTER-argocd-token-user@$MGMT_CLUSTER | awk '{print $1}')
 argocd app create mgmt-app-of-apps \
-  --repo https://gitlab.com/azwickey/tkg-autopilot.git \
+  --repo $REPO.git \
   --dest-server $SERVER \
   --dest-namespace default \
   --sync-policy automated \

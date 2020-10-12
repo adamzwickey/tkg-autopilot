@@ -3,6 +3,7 @@ lt.yaml
 ec2.yaml
 config.yaml
 custom-template.json
+scripts/init-injected.sh
 keys/
 extensions-1.2/
 assets/

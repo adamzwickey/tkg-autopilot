@@ -2,12 +2,20 @@
 #!/bin/bash -e
 PARAMS_YAML=vars.yaml
 
+# Config of bootstrapping vars
+AWS_BUCKET=$(yq r $PARAMS_YAML aws.bucket)
+GIT_REPO=$(yq r $PARAMS_YAML repo)
+#Inject into init.sh
+sed -e 's|BUCKET_VAR|'$AWS_BUCKET'|g' \
+    -e 's|REPO_VAR|'$GIT_REPO'|g' \
+    scripts/init.sh > scripts/init-injected.sh
+
 #Prepare AWS template
 INSTANCE_PROFILE=$(yq r $PARAMS_YAML aws.instanceProfileARN)
 SECURITY_GROUP=$(yq r $PARAMS_YAML aws.securityGroup)
 SUBNET=$(yq r $PARAMS_YAML aws.publicSubnet1)
 KEYNAME=$(yq r $PARAMS_YAML aws.keyPairName)
-USER_DATA=$(cat scripts/init.sh | base64 )
+USER_DATA=$(cat scripts/init-injected.sh | base64 )
 sed -e 's|INSTANCE_PROFILE|'$INSTANCE_PROFILE'|g' \
     -e 's|SECURITY_GROUP|'$SECURITY_GROUP'|g' \
     -e 's|SUBNET|'$SUBNET'|g' \
