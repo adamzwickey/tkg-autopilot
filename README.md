@@ -13,7 +13,7 @@ This project is meant to automate the paving of TKG enfirments, including common
 ```bash
 aws s3 cp vars.yaml s3://tkg-autopilot/vars.yaml
 ```
-- Additionally, edit the values.yaml file(s) in `/cd/argo/mgmt` and `/cd/argo/worklaod1` to reflect your environment.  This will drive the true GitOps worklfow.  And value that has a comment of `# This must be overridden ` does not need to be changed as this is a _Secret_ that will be read from the params.yaml that is uploaded to the S3 bucket.
+- Additionally, edit the values.yaml file(s) in `/cd/argo/mgmt` and `/cd/argo/workload1` to reflect your environment.  This will drive the true GitOps worklfow.  And value that has a comment of `# This must be overridden ` does not need to be changed as this is a _Secret_ that will be read from the params.yaml that is uploaded to the S3 bucket.
 - When you are ready to deploy execute the install script:
 ```bash
 source ./scripts/install.sh
