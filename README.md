@@ -1,26 +1,25 @@
 # tkg-autopilot
-This project is meant to automate the paving of TKG enfirments, including common extensions, in AWS.  It utilizes TKG, Helm, and ArgoCD utilizing the App of Apps pattern
+This project is meant to automate the paving of TKG enfirments, including common extensions, in AWS.  It utilizes TKG, Helm, and ArgoCD utilizing the [App of Apps pattern](https://argoproj.github.io/argo-cd/operator-manual/cluster-bootstrapping/)
+
 
 ![home](https://gitlab.com/azwickey/tkg-autopilot/-/raw/master/img/argo.png "argo")
 
-aws ec2 get-launch-template-data --instance-id i-0cc81778add99f3f1 --query "LaunchTemplateData"
+## Installation
 
-aws ec2 create-launch-template \
-    --launch-template-name tkg-template \
-    --version-description Version1 \
-    --tag-specifications 'ResourceType=launch-template,Tags=[{Key=purpose,Value=demo}]' \
-    --launch-template-data file://template.json
+- Fork this repo.  Since this is your GitOps source of truth, you must fork rather than simply clone
+- Make a copy of vars.yaml.example named vars.yaml in the root directory of your repo. 
+- Edit vars.yaml, providing configuration values that reflect your desired envornment.
+- Copy the vars.yaml file to the root of the S3 bucket you specfied in `aws.bucket`.  Additionally, make sure that the S3 bucket has an access policy that allows your IAM instance profile R/W access.  For example:
+```bash
+aws s3 cp vars.yaml s3://tkg-autopilot/vars.yaml
+```
+- Additionally, edit the values.yaml file(s) in `/cd/argo/mgmt` and `/cd/argo/worklaod1` to reflect your environment.  This will drive the true GitOps worklfow.  And value that has a comment of `# This must be overridden ` does not need to be changed as this is a _Secret_ that will be read from the params.yaml that is uploaded to the S3 bucket.
+- When you are ready to deploy execute the install script:
+```bash
+source ./scripts/install.sh
+```
+This will execute the following tasks:
 
-aws ec2 delete-launch-template --launch-template-id lt-0e44291fc8e5f4f1e --region us-east-2
-
-aws ec2 run-instances --launch-template LaunchTemplateId=lt-0f9c0e09f11b7c295,Version=1
-
-aws s3 cp vars.yaml s3://tkg-autopilot/vars.yaml 
-
-# Autocomplete
-alias k=kubectl
-echo 'alias k=kubectl' >>~/.bashrc
-echo 'source <(kubectl completion bash)' >>~/.bashrc
-kubectl completion bash >/etc/bash_completion.d/kubectl
-echo 'complete -F __start_kubectl k' >>~/.bashrc
-source ~/.bashrc
+- Create an EC2 launch template.  The details of the templace are stored in `lt.yaml`
+- Launch an instance using this template, named TKG Bootstrapper.
+- Tails the output of the bootstrapping log, which is found in `/var/log/cloud-init-output.log` on the instance.
