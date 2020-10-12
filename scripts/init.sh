@@ -41,6 +41,14 @@ sudo yum install httpd-tools -y  #used for Arco admin PWD
 
 echo "Done with pre-reqs"
 
+#Setup k8s autocomplete
+alias k=kubectl
+echo 'alias k=kubectl' >>~/.bashrc
+echo 'source <(kubectl completion bash)' >>~/.bashrc
+kubectl completion bash >/etc/bash_completion.d/kubectl
+echo 'complete -F __start_kubectl k' >>~/.bashrc
+source ~/.bashrc
+
 export REPO=REPO_VAR
 export BUCKET=BUCKET_VAR
 
