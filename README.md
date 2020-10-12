@@ -1,4 +1,7 @@
 # tkg-autopilot
+This project is meant to automate the paving of TKG enfirments, including common extensions, in AWS.  It utilizes TKG, Helm, and ArgoCD utilizing the App of Apps pattern
+
+![home](https://gitlab.com/azwickey/tkg-autopilot/-/raw/master/img/argo.png "argo")
 
 aws ec2 get-launch-template-data --instance-id i-0cc81778add99f3f1 --query "LaunchTemplateData"
 
