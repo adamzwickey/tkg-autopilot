@@ -1,6 +1,8 @@
-aws:
-  accessKey: xxxxx
-  secretKey: xxxxxxxx
+repo: https://gitlab.com/azwickey/tkg-autopilot
+aws:  
+  bucket: tkg-autopilot
+  accessKey: AKIAJJLAD2LEFJJIEOBA
+  secretKey: xxxxxxx
   region: us-east-2
   az1: us-east-2a
   az2: us-east-2b
@@ -15,12 +17,23 @@ aws:
   privateSubnet1: subnet-01504f4f789892d81
   privateSubnet2: subnet-007b3cc4c90e0a4ac
   privateSubnet3: subnet-0cd72913ed8084dc4
+  hostedZoneId: Z10216462Y3G2KQ1H8ATW
 tkg:
   mgmt:
     plan: dev
-    name: mgmt
+    name: aws-mgmt
     ingress: "*.mgmt.tanzu.zwickey.net"
+    argo:
+      pwd: "xxxx"
+      ingress: argo.mgmt.tanzu.zwickey.net
+    dex:
+      oidcSecret: xxxx
+      wlClientSecret: xxxx
   workload1:
     plan: dev
-    name: w1
-    ingress: "*.w1.tanzu.zwickey.net"
+    name: aws-workload1
+    ingress: "*.aws-workload1.tanzu.zwickey.net"
+  workload2:
+    plan: dev
+    name: aws-workload2
+    ingress: "*.aws-workload1.tanzu.zwickey.net"
