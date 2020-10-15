@@ -121,3 +121,6 @@ argocd app create mgmt-app-of-apps \
   --helm-set dex.clientSecret=$(yq r $VARS_YAML tkg.mgmt.dex.oidcSecret) \
   --helm-set dex.wlClientSecret1=$(yq r $VARS_YAML tkg.mgmt.dex.wlClientSecret) \
   --helm-set argo.pwd="$(yq r $VARS_YAML tkg.mgmt.argo.pwd)"
+
+  # We wait for the workload cluster(s) to be added to Argo and then add the secret vars
+  

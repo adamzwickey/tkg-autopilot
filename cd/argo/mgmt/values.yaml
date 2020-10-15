@@ -23,4 +23,5 @@ dex:
 workload1:
   clusterName: aws-workload1
   workersPerPool: "2"
+  gitOpsPath: /cd/argo/workload1
   

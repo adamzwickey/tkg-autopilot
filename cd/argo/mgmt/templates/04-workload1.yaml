@@ -34,5 +34,7 @@ spec:
           value: "{{ .Values.argo.pwd }}"
         - name: dexCA
           value: "{{ .Values.dex.ca }}"
+        - name: gitOpsPath
+          value: "{{ .Values.workload1.gitOpsPath }}"
           
           

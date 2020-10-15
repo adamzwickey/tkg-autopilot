@@ -6,3 +6,4 @@ argoFQDN: example.com
 argoPwd: topsecret
 wlClientSecret1: topsecret
 dexCA: 123123asdasd
+gitOpsPath: /gitops

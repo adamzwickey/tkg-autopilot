@@ -42,5 +42,6 @@ spec:
           - "{{ .Values.argoFQDN }}"
           - "{{ .Values.argoPwd }}"
           - "{{ .Values.mgmtClusterName }}"
+          - "{{ .Values.gitOpsPath }}"
       restartPolicy: Never
       serviceAccountName: tkgtransitioner
