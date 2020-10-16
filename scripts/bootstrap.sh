@@ -57,7 +57,7 @@ tkg init -i aws -p $MGMT_PLAN --ceip-participation false --name $(yq r $VARS_YAM
 # once created we'll upload kube and tkg config files for use in local workstation if needed
 aws s3 cp $HOME/.tkg/config.yaml s3://$2/config.yaml  
 aws s3 cp $HOME/.kube/config s3://$2/kubeconfig  
-
+tkg scale cluster aws-mgmt -n tkg-system -w 3
 
 cd /tkg-autopilot
 kubectl apply -f manifests/mgmt/cluster-issuer.yaml
