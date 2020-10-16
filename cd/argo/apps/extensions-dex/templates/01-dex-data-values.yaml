@@ -32,7 +32,7 @@ stringData:
           redirectURIs:
           - 'https://{{ .Values.gangway1 }}/callback'
           name: {{ .Values.wlName1 }}
-          secret: topsecret
+          secret: 4715bb03d521d0ca0b2a32ba8c797e1b
     #! Deploy dex first and update sample-elb with real name once dex service loadbalancer is created, dnsNames is optional.
     dns:
       aws:

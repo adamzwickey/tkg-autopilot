@@ -18,7 +18,7 @@ stringData:
         APISERVER_URL: {{ .Values.apiServer }}
       secret:
         sessionKey: {{ .Values.sessionKey }}
-        clientSecret: topsecret
+        clientSecret: 4715bb03d521d0ca0b2a32ba8c797e1b
       service:
         type: NodePort
     dns:
