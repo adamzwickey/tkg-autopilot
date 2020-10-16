@@ -1,0 +1,9 @@
+clusterName: wlc
+mgmtClusterName: mgmt
+workersPerPool: "1"
+dexFQDN: example.com
+argoFQDN: example.com
+argoPwd: topsecret
+wlClientSecret1: topsecret
+dexCA: 123123asdasd
+gitOpsPath: /gitops

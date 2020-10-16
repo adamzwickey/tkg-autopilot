@@ -31,7 +31,7 @@ metadata:
   namespace: default
 spec:
   bastion:
-    enabled: false
+    enabled: true
   networkSpec:
     cni:
       cniIngressRules:
@@ -1165,7 +1165,7 @@ stringData:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            image: gcr.io/kubernetes-development-244305/antrea/antrea-debian:v0.9.3_vmware.1
+            image: registry.tkg.vmware.run/antrea/antrea-debian:v0.9.3_vmware.1
             imagePullPolicy: IfNotPresent
             name: antrea-controller
             ports:
@@ -1291,7 +1291,7 @@ stringData:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            image: gcr.io/kubernetes-development-244305/antrea/antrea-debian:v0.9.3_vmware.1
+            image: registry.tkg.vmware.run/antrea/antrea-debian:v0.9.3_vmware.1
             imagePullPolicy: IfNotPresent
             livenessProbe:
               exec:
@@ -1349,7 +1349,7 @@ stringData:
               name: xtables-lock
           - command:
             - start_ovs
-            image: gcr.io/kubernetes-development-244305/antrea/antrea-debian:v0.9.3_vmware.1
+            image: registry.tkg.vmware.run/antrea/antrea-debian:v0.9.3_vmware.1
             imagePullPolicy: IfNotPresent
             livenessProbe:
               exec:
@@ -1383,7 +1383,7 @@ stringData:
           initContainers:
           - command:
             - install_cni
-            image: gcr.io/kubernetes-development-244305/antrea/antrea-debian:v0.9.3_vmware.1
+            image: registry.tkg.vmware.run/antrea/antrea-debian:v0.9.3_vmware.1
             imagePullPolicy: IfNotPresent
             name: install-cni
             resources:
@@ -1525,7 +1525,7 @@ stringData:
           type: workload
           plan: prod
           kubernetesProvider: VMware Tanzu Kubernetes Grid
-          tkgVersion: 1.2.0-rc.2
+          tkgVersion: 1.2.0
           infrastructure:
             provider: aws
         bom:
@@ -1550,7 +1550,7 @@ stringData:
     data:
       bom.yaml: |
         release:
-          version: 1.2.0-rc.2
+          version: 1.2.0
         components:
           alertmanager:
             version: v0.20.0+vmware.1
@@ -1567,13 +1567,13 @@ stringData:
           cluster-api-provider-azure:
             version: v0.4.8-47-gfbb2d55b+vmware.1
           cluster_api:
-            version: v0.3.9-89-g2c4ce1957+vmware.1
+            version: v0.3.10+vmware.1
           cluster_api_aws:
             version: v0.5.5+vmware.1
           cluster_api_vsphere:
             version: v0.7.1+vmware.1
           cni_plugins:
-            version: v0.8.6+vmware.4
+            version: v0.8.6+vmware.3
           configmap-reload:
             version: v0.3.0+vmware.1
           containerd:
@@ -1581,11 +1581,11 @@ stringData:
           contour:
             version: v1.8.1+vmware.1
           coredns:
-            version: v1.7.0+vmware.3
+            version: v1.6.5+vmware.7
           crash-diagnostics:
             version: v0.2.2+vmware.3
           cri_tools:
-            version: v1.18.0+vmware.1
+            version: v1.16.1+vmware.6
           csi_attacher:
             version: v2.0.0+vmware.2
           csi_livenessprobe:
@@ -1599,7 +1599,7 @@ stringData:
           envoy:
             version: v1.15.0+vmware.1
           etcd:
-            version: v3.4.13+vmware.2
+            version: v3.4.3+vmware.8
           fluent-bit:
             version: v1.5.3+vmware.1
           gangway:
@@ -1623,7 +1623,7 @@ stringData:
           kube_rbac_proxy:
             version: v0.4.1+vmware.2
           kubernetes:
-            version: v1.19.1+vmware.2
+            version: v1.17.11+vmware.1
           kubernetes-sigs_kind:
             version: v0.8.1-1.19.1+vmware.2
           node_ova:
@@ -1637,7 +1637,7 @@ stringData:
           sonobuoy:
             version: v0.19.0+vmware.1
           tanzu_tkg-cli:
-            version: v1.2.0-rc.2+vmware.1
+            version: v1.2.0+vmware.1
           tkg-connectivity:
             version: v1.2.0+vmware.2
           tkg_extensions:
@@ -1658,16 +1658,16 @@ stringData:
           apiVersion: kubeadm.k8s.io/v1beta2
           kind: ClusterConfiguration
           imageRepository: registry.tkg.vmware.run
-          kubernetesVersion: v1.19.1+vmware.2
+          kubernetesVersion: v1.17.11+vmware.1
           etcd:
             local:
               dataDir: /var/lib/etcd
               imageRepository: registry.tkg.vmware.run
-              imageTag: v3.4.13_vmware.2
+              imageTag: v3.4.3_vmware.8
           dns:
             type: CoreDNS
             imageRepository: registry.tkg.vmware.run
-            imageTag: v1.7.0_vmware.3
+            imageTag: v1.6.5_vmware.7
         kindKubeadmConfigSpec:
         - 'kind: Cluster'
         - 'apiVersion: kind.x-k8s.io/v1alpha4'
@@ -1679,50 +1679,50 @@ stringData:
         - '  etcd:'
         - '    local:'
         - '      imageRepository: registry.tkg.vmware.run'
-        - '      imageTag: v3.4.13_vmware.2'
+        - '      imageTag: v3.4.3_vmware.8'
         - '  dns:'
         - '    type: CoreDNS'
         - '    imageRepository: registry.tkg.vmware.run'
-        - '    imageTag: v1.7.0_vmware.3'
+        - '    imageTag: v1.6.5_vmware.7'
         ami:
           ap-northeast-1:
-            id: ami-0c1c113d54097e69b
+            id: ami-060e45ff4375dd7b7
           ap-northeast-2:
-            id: ami-05392e26a65b58eb8
+            id: ami-07b73182100caec71
           ap-south-1:
-            id: ami-05df67ff5e45e7c29
+            id: ami-01908fe5f01a32355
           ap-southeast-1:
-            id: ami-031b2dbfa0d2fc68d
+            id: ami-071ea3f4ba37d912c
           ap-southeast-2:
-            id: ami-0779b71163a6a6bae
+            id: ami-0e67eca74f9f0b302
           eu-central-1:
-            id: ami-0c93faf83add629f9
+            id: ami-031f7e648f960ad87
           eu-west-1:
-            id: ami-0577cfce6a0f5235f
+            id: ami-0a8a643d368443710
           eu-west-2:
-            id: ami-0914d2e4e7f902878
+            id: ami-01cfc29d479b46df7
           eu-west-3:
-            id: ami-0b583ecc7bb02f8da
+            id: ami-0a2d3fe0dabdb8dfc
           sa-east-1:
-            id: ami-08ac0b3c42af6b211
+            id: ami-0ba0df13522956c68
           us-east-1:
-            id: ami-0647eed5634b73cd5
+            id: ami-00964a25a27d82697
           us-east-2:
-            id: ami-058759e4c2532dc14
+            id: ami-06a9cecfa7cec1b76
           us-gov-east-1:
-            id: ami-029cd30e1bfa78b21
+            id: ami-0378d796cfc09bead
           us-gov-west-1:
-            id: ami-063867a82fb29e9f0
+            id: ami-004f3f07803d92494
           us-west-2:
-            id: ami-0ff3c6e7c554774f2
+            id: ami-017f9931b88a957a8
         azure:
           publisher: vmware-inc
           offer: tkg-capi
-          sku: k8s-1dot19dot1-ubuntu-1804
+          sku: k8s-1dot17dot11-ubuntu-1804
           version: 2020.09.23
           thirdPartyImage: true
         imageConfig:
-          imageRepository: gcr.io/kubernetes-development-244305
+          imageRepository: registry.tkg.vmware.run
         images:
           alertmanagerImage:
             imagePath: prometheus/alertmanager
@@ -1732,7 +1732,7 @@ stringData:
             tag: v0.9.3_vmware.1
           cabpkControllerImage:
             imagePath: cluster-api/kubeadm-bootstrap-controller
-            tag: v0.3.9-89-g2c4ce1957_vmware.1
+            tag: v0.3.10_vmware.1
           cadvisorImage:
             imagePath: prometheus/cadvisor
             tag: v0.36.0_vmware.1
@@ -1753,7 +1753,7 @@ stringData:
             tag: v0.5.5_vmware.1
           capiControllerImage:
             imagePath: cluster-api/cluster-api-controller
-            tag: v0.3.9-89-g2c4ce1957_vmware.1
+            tag: v0.3.10_vmware.1
           capvControllerImage:
             imagePath: cluster-api/cluster-api-vsphere-controller
             tag: v0.7.1_vmware.1
@@ -1786,7 +1786,7 @@ stringData:
             tag: v1.8.1_vmware.1
           coredns:
             imagePath: coredns
-            tag: v1.7.0_vmware.3
+            tag: v1.6.5_vmware.7
           csiAttacherImage:
             imagePath: csi/csi-attacher
             tag: v2.0.0_vmware.2
@@ -1813,7 +1813,7 @@ stringData:
             tag: v1.15.0_vmware.1
           etcd:
             imagePath: etcd
-            tag: v3.4.13_vmware.2
+            tag: v3.4.3_vmware.8
           fluentBitImage:
             imagePath: fluent-bit
             tag: v1.5.3_vmware.1
@@ -1882,28 +1882,28 @@ stringData:
             tag: v0.9.0_vmware.1
           kcpControllerImage:
             imagePath: cluster-api/kubeadm-control-plane-controller
-            tag: v0.3.9-89-g2c4ce1957_vmware.1
+            tag: v0.3.10_vmware.1
           kindNodeImage:
             imagePath: kind/node
             tag: v1.19.1_vmware.2
           kubeAPIServer:
             imagePath: kube-apiserver
-            tag: v1.19.1_vmware.2
+            tag: v1.17.11_vmware.1
           kubeControllerManager:
             imagePath: kube-controller-manager
-            tag: v1.19.1_vmware.2
+            tag: v1.17.11_vmware.1
           kubeE2e:
             imagePath: e2e-test
-            tag: v1.19.1_vmware.2
+            tag: v1.17.11_vmware.1
           kubeProxy:
             imagePath: kube-proxy
-            tag: v1.19.1_vmware.2
+            tag: v1.17.11_vmware.1
           kubeRbacProxyControllerImage:
             imagePath: cluster-api/kube-rbac-proxy
             tag: v0.4.1_vmware.2
           kubeScheduler:
             imagePath: kube-scheduler
-            tag: v1.19.1_vmware.2
+            tag: v1.17.11_vmware.1
           kubeStateMetricsImage:
             imagePath: prometheus/kube-state-metrics
             tag: v1.9.5_vmware.1
@@ -1912,7 +1912,7 @@ stringData:
             tag: v0.1.8_vmware.1
           pause:
             imagePath: pause
-            tag: "3.2"
+            tag: "3.1"
           prometheusImage:
             imagePath: prometheus/prometheus
             tag: v2.18.1_vmware.1
