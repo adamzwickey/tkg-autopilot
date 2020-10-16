@@ -23,15 +23,14 @@ stringData:
           issuer: {{ .Values.idpUrl }}
           insecureEnableGroups: true
           getUserInfo: true
-          
         #! Deploy dex first with dummy staticClients. Once gangway is installed in workload cluster, update static clients with gangway information
         #@overlay/replace
         staticClients:
         - id: {{ .Values.wlName1 }}
           redirectURIs:
           - 'https://{{ .Values.gangway1 }}/callback'
-          name: aws-workload1
-          secret: {{ .Values.wlClientSecret1 }}
+          name: {{ .Values.wlName1 }}
+          secret: topsecret
     #! Deploy dex first and update sample-elb with real name once dex service loadbalancer is created, dnsNames is optional.
     dns:
       aws:

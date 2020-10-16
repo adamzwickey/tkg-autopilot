@@ -26,8 +26,6 @@ spec:
           value: "{{ .Values.serverFQDN }}"
         - name: sessionKey
           value: "{{ .Values.gangway.sessionKey }}"
-        - name: clientSecret
-          value: "{{ .Values.gangway.clientSecret }}"
         - name: gangwayFQDN
           value: "{{ .Values.gangway.ingress }}"
         - name: dexCA

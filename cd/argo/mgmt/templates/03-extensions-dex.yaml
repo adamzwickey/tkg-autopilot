@@ -30,7 +30,5 @@ spec:
           value: {{ .Values.dex.wlName1 }}
         - name: gangway1
           value: {{ .Values.dex.gangway1 }}
-        - name: wlClientSecret1
-          value: {{ .Values.dex.wlClientSecret1 }}
           
           
