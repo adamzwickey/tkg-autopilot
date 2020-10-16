@@ -11,8 +11,6 @@ stringData:
     ---
     infrastructure_provider: "aws"      
     gangway:
-      image:
-        repository: projects-stg.registry.vmware.com/tkg
       config:
         clusterName: {{ .Values.clusterName }}
         DEX_SVC_LB_HOSTNAME: {{ .Values.dexFQDN }}

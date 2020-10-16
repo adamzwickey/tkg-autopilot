@@ -65,7 +65,7 @@ spec:
         env:
         - name: KAPPCTRL_MEM_TMP_DIR
           value: /etc/kappctrl-mem-tmp
-        image: projects-stg.registry.vmware.com/tkg/kapp-controller:v0.9.0_vmware.1
+        image: registry.tkg.vmware.run/kapp-controller:v0.9.0_vmware.1
         imagePullPolicy: IfNotPresent
         name: kapp-controller
         resources:

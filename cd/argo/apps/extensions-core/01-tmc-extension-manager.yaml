@@ -853,7 +853,7 @@ spec:
       containers:
       - command:
         - /usr/local/bin/manager
-        image: projects-stg.registry.vmware.com/tkg/tmc-extension-manager:v1.2.0_vmware.1
+        image: registry.tkg.vmware.run/tmc-extension-manager:v1.2.0_vmware.1
         imagePullPolicy: IfNotPresent
         securityContext:
           runAsUser: 10000

@@ -26,7 +26,7 @@ spec:
       serviceAccountName: gangway-extension-sa
       fetch:
         - image:
-            url: projects-stg.registry.vmware.com/tkg/tkg-extensions-templates:v1.2.0_vmware.1
+            url: registry.tkg.vmware.run/tkg-extensions-templates:v1.2.0_vmware.1
       template:
         - ytt:
             ignoreUnknownComments: true
