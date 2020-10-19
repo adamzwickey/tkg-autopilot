@@ -4,5 +4,5 @@ ingressFQDN: example.com
 idpUrl: https://idp.com
 wlName1:  wl1
 gangway1: https://workload1.com
-wlName1:  wl2
-gangway1: https://workload2.com
+wlName2:  wl2
+gangway2: https://workload2.com
