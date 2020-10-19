@@ -32,6 +32,23 @@ spec:
               - tkg-extensions/common
               - tkg-extensions/registry/harbor
             inline:
+              paths:
+                annotations-harbor.yaml: |
+                  #@ load("@ytt:overlay", "overlay")
+                  #@overlay/match by=overlay.subset({"kind": "Ingress", "metadata": {"name": "harbor-ingress"}})
+                  ---
+                  metadata:
+                    #@overlay/match-child-defaults missing_ok=True
+                    annotations: 
+                      cert-manager.io/cluster-issuer: "letsencrypt-contour-cluster-issuer"
+                annotations-notary.yaml: |
+                  #@ load("@ytt:overlay", "overlay")
+                  #@overlay/match by=overlay.subset({"kind": "Ingress", "metadata": {"name": "harbor-ingress-notary"}})
+                  ---
+                  metadata:
+                    #@overlay/match-child-defaults missing_ok=True
+                    annotations: 
+                      cert-manager.io/cluster-issuer: "letsencrypt-contour-cluster-issuer"
               pathsFrom:
                 - secretRef:
                     name: harbor-data-values
