@@ -125,11 +125,11 @@ argocd app create mgmt-app-of-apps \
 # We wait for the workload cluster(s) to be added to Argo and then add the secret vars
 export CLUSTER1=$(yq r $VARS_YAML tkg.workload1.name)
 while argocd app list | grep $CLUSTER1 ; [ $? -ne 0 ]; do
-	echo "$CLUSTER1 not available in ArgoCD yet"
+	echo "$CLUSTER1-app-of-apps not available in ArgoCD yet"
 	sleep 5s
 done
 sleep 5s
-argocd app $CLUSTER1 set --helm-set-string aws.credentials.secretKey=$(yq r $VARS_YAML aws.secretkey) 
-argocd app $CLUSTER1 set --helm-set-string serverFQDN=$(yq r $VARS_YAML tkg.mgmt.dex.wlClientSecret) 
-argocd app $CLUSTER1 set --helm-set-string gangway.clientSecret=$(yq r $VARS_YAML tkg.mgmt.dex.wlClientSecret) 
-echo "$CLUSTER1 Helm vars updated"
+argocd app set $CLUSTER1-app-of-apps --helm-set-string aws.credentials.secretKey=$(yq r $VARS_YAML aws.secretkey) 
+argocd app set $CLUSTER1-app-of-apps --helm-set-string serverFQDN=$(argocd cluster list | grep $CLUSTER1 | awk '{print $1}' | awk -F':' '{print $2}' | awk -F'//' '{print $2}') 
+argocd app set $CLUSTER1-app-of-apps --helm-set-string gangway.clientSecret=$(yq r $VARS_YAML tkg.mgmt.dex.wlClientSecret) 
+echo "$CLUSTER1-app-of-apps Helm vars updated"
