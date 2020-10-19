@@ -1,0 +1,3 @@
+domain: core.harbor.domain
+commonPwd: topsecret
+secretKey: abcdefghijklmnop
