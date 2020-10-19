@@ -30,5 +30,8 @@ spec:
           value: {{ .Values.dex.wlName1 }}
         - name: gangway1
           value: {{ .Values.dex.gangway1 }}
-          
+        - name: wlName2
+          value: {{ .Values.dex.wlName2 }}
+        - name: gangway2
+          value: {{ .Values.dex.gangway2 }}
           
