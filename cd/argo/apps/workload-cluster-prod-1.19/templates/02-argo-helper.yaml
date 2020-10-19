@@ -29,7 +29,7 @@ roleRef:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: tkgtransition
+  name: tkgtransition{{ .Values.clusterName }}
 spec:
   ttlSecondsAfterFinished: 100
   template:
