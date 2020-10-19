@@ -7,7 +7,7 @@ ns: testing
 ingress:
   ingressFQDN: '*.workload2.tanzu.zwickey.net'
   email: azwickey@gmail.com
-clusterName: aws-workload1
+clusterName: aws-workload2
 gangway:
   dexFQDN: dex.mgmt.tanzu.zwickey.net
   sessionKey: b97c55a5b2c23abc33c406cb1da6ea8c
