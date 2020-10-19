@@ -133,3 +133,14 @@ argocd app set $CLUSTER1-app-of-apps --helm-set-string aws.credentials.secretKey
 argocd app set $CLUSTER1-app-of-apps --helm-set-string serverFQDN=$(argocd cluster list | grep $CLUSTER1 | awk '{print $1}' | awk -F':' '{print $2}' | awk -F'//' '{print $2}') 
 argocd app set $CLUSTER1-app-of-apps --helm-set-string gangway.clientSecret=$(yq r $VARS_YAML tkg.mgmt.dex.wlClientSecret) 
 echo "$CLUSTER1-app-of-apps Helm vars updated"
+
+export CLUSTER2=$(yq r $VARS_YAML tkg.workload2.name)
+while argocd app list | grep $CLUSTER2 ; [ $? -ne 0 ]; do
+	echo "$CLUSTER2-app-of-apps not available in ArgoCD yet"
+	sleep 5s
+done
+sleep 5s
+argocd app set $CLUSTER2-app-of-apps --helm-set-string aws.credentials.secretKey=$(yq r $VARS_YAML aws.secretkey) 
+argocd app set $CLUSTER2-app-of-apps --helm-set-string serverFQDN=$(argocd cluster list | grep $CLUSTER2 | awk '{print $1}' | awk -F':' '{print $2}' | awk -F'//' '{print $2}') 
+argocd app set $CLUSTER2-app-of-apps --helm-set-string gangway.clientSecret=$(yq r $VARS_YAML tkg.mgmt.dex.wlClientSecret) 
+echo "$CLUSTER2-app-of-apps Helm vars updated"
