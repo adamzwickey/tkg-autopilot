@@ -56,7 +56,7 @@ spec:
                   spec:
                     tls:
                       #@overlay/match by=overlay.index(0)
-                      - secretName: harbor-tls-acme
+                      - secretName: notary-tls-acme
               pathsFrom:
                 - secretRef:
                     name: harbor-data-values
