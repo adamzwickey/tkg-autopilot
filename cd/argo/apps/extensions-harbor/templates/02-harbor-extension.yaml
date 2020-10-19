@@ -44,7 +44,7 @@ spec:
                   spec:
                     tls:
                       #@overlay/match by=overlay.index(0)
-                      - secretName: harbor-tls-acme
+                      - secretName: harbor-tls
                 annotations-notary.yaml: |
                   #@ load("@ytt:overlay", "overlay")
                   #@overlay/match by=overlay.subset({"kind": "Ingress", "metadata": {"name": "harbor-ingress-notary"}})
