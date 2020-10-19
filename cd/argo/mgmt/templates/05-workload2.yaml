@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: workload-cluster-2
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: default
+    server: {{ .Values.server }}
+  project: default
+  # syncPolicy:
+  #   automated: {}
+  source:
+    path: cd/argo/apps/workload-cluster-prod-1.18
+    repoURL: {{ .Values.repoURL }}
+    targetRevision: {{ .Values.targetRevision }}
+    helm:
+      parameters:
+        - name: clusterName
+          value: {{ .Values.workload2.clusterName }}
+        - name: mgmtClusterName
+          value: {{ .Values.mgmtClusterName }}
+        - name: wlClientSecret
+          value: {{ .Values.dex.wlClientSecret }}
+        - name: workersPerPool
+          value: "{{ .Values.workload2.workersPerPool }}"
+        - name: dexFQDN
+          value: "{{ .Values.dex.ingressFQDN }}"
+        - name: argoFQDN
+          value: "{{ .Values.argo.ingress }}"
+        - name: argoPwd
+          value: "{{ .Values.argo.pwd }}"
+        - name: dexCA
+          value: "{{ .Values.dex.ca }}"
+        - name: gitOpsPath
+          value: "{{ .Values.workload2.gitOpsPath }}"
+          
+          

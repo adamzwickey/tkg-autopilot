@@ -23,4 +23,8 @@ workload1:
   clusterName: aws-workload1
   workersPerPool: "2"
   gitOpsPath: cd/argo/workload1
+workload2:
+  clusterName: aws-workload2
+  workersPerPool: "1"
+  gitOpsPath: cd/argo/workload2
   
