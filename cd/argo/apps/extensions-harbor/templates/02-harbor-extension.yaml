@@ -41,6 +41,10 @@ spec:
                     #@overlay/match-child-defaults missing_ok=True
                     annotations: 
                       cert-manager.io/cluster-issuer: "letsencrypt-contour-cluster-issuer"
+                    spec:
+                      tls:
+                        #@overlay/match by=overlay.index(0)
+                        - secretName: harbor-tls-acme
                 annotations-notary.yaml: |
                   #@ load("@ytt:overlay", "overlay")
                   #@overlay/match by=overlay.subset({"kind": "Ingress", "metadata": {"name": "harbor-ingress-notary"}})
@@ -49,6 +53,10 @@ spec:
                     #@overlay/match-child-defaults missing_ok=True
                     annotations: 
                       cert-manager.io/cluster-issuer: "letsencrypt-contour-cluster-issuer"
+                    spec:
+                      tls:
+                        #@overlay/match by=overlay.index(0)
+                        - secretName: harbor-tls-acme
               pathsFrom:
                 - secretRef:
                     name: harbor-data-values
