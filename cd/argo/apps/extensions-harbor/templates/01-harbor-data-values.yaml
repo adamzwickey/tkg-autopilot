@@ -107,7 +107,7 @@ stringData:
           storageClass: ""
           subPath: ""
           accessMode: ReadWriteOnce
-          size: 10Gi
+          size: 100Gi
         jobservice:
           existingClaim: ""
           storageClass: ""
