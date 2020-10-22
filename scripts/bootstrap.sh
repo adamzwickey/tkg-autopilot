@@ -23,6 +23,9 @@ tar -zxvf tkg-extensions-manifests-*
 rm *.tar.gz
 mv tkg-extensions-* tkg-extensions-manifests
 
+#TMC
+mv tmc /usr/bin/tmc
+
 # Initialize TKG
 tkg get mc
 # Write needed values into TKG config file
@@ -58,6 +61,16 @@ tkg init -i aws -p $MGMT_PLAN --ceip-participation false --name $(yq r $VARS_YAM
 aws s3 cp $HOME/.tkg/config.yaml s3://$2/config.yaml  
 aws s3 cp $HOME/.kube/config s3://$2/kubeconfig  
 tkg scale cluster aws-mgmt -n tkg-system -w 3
+
+# TMC registration
+export TMC_API_TOKEN=$(yq r $VARS_YAML tmc.token)
+export TMC_GROUP=$(yq r $VARS_YAML tmc.clusterGroup)
+export TMC_CLUSTER_NAME=$(yq r $VARS_YAML tkg.mgmt.name)
+echo TMC_API_TOKEN=$TMC_API_TOKEN
+echo TMC_GROUP=$TMC_GROUP
+./tmc login --no-configure --name temp
+./tmc cluster attach -g $TMC_GROUP -n TMC_CLUSTER_NAME -o manifest.yaml --management-cluster-name attached --provisioner-name attached
+kubectl apply -f manifest.yaml
 
 cd /tkg-autopilot
 kubectl apply -f manifests/mgmt/cluster-issuer.yaml
