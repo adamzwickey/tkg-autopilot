@@ -43,9 +43,10 @@ spec:
           - "{{ .Values.argoPwd }}"
           - "{{ .Values.mgmtClusterName }}"
           - "{{ .Values.gitOpsPath }}"
-          - "{{ .Values.clusterGroup }}"
         env:
           - name: TMC_API_TOKEN
             value: "{{ .Values.token }}"
+          - name: TMC_GROUP
+              value: "{{ .Values.clusterGroup }}"
       restartPolicy: Never
       serviceAccountName: tkgtransitioner
