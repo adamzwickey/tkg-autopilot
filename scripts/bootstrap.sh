@@ -24,6 +24,7 @@ rm *.tar.gz
 mv tkg-extensions-* tkg-extensions-manifests
 
 #TMC
+chmod u+x tmc
 mv tmc /usr/bin/tmc
 
 # Initialize TKG
@@ -68,8 +69,8 @@ export TMC_GROUP=$(yq r $VARS_YAML tmc.clusterGroup)
 export TMC_CLUSTER_NAME=$(yq r $VARS_YAML tkg.mgmt.name)
 echo TMC_API_TOKEN=$TMC_API_TOKEN
 echo TMC_GROUP=$TMC_GROUP
-./tmc login --no-configure --name temp
-./tmc cluster attach -g $TMC_GROUP -n TMC_CLUSTER_NAME -o manifest.yaml --management-cluster-name attached --provisioner-name attached
+tmc login --no-configure --name temp
+tmc cluster attach -g $TMC_GROUP -n $TMC_CLUSTER_NAME -o manifest.yaml --management-cluster-name attached --provisioner-name attached
 kubectl apply -f manifest.yaml
 
 cd /tkg-autopilot
