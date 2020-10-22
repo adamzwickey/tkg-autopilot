@@ -38,6 +38,11 @@ stringData:
           - 'https://{{ .Values.gangway2 }}/callback'
           name: {{ .Values.wlName2 }}
           secret: 4715bb03d521d0ca0b2a32ba8c797e1b
+        - id: kubeapps
+          redirectURIs:
+          - 'https://kubeapps.mgmt.tanzu.zwickey.net/callback'
+          name: kubeapps
+          secret: 4715bb03d521d0ca0b2a32ba8c797e1b
     #! Deploy dex first and update sample-elb with real name once dex service loadbalancer is created, dnsNames is optional.
     dns:
       aws:
