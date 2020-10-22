@@ -47,6 +47,6 @@ spec:
           - name: TMC_API_TOKEN
             value: "{{ .Values.token }}"
           - name: TMC_GROUP
-              value: "{{ .Values.clusterGroup }}"
+            value: "{{ .Values.clusterGroup }}"
       restartPolicy: Never
       serviceAccountName: tkgtransitioner
