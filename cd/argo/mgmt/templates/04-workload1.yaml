@@ -10,8 +10,8 @@ spec:
     namespace: default
     server: {{ .Values.server }}
   project: default
-  # syncPolicy:
-  #   automated: {}
+  syncPolicy:
+    automated: {}
   source:
     path: cd/argo/apps/workload-cluster-prod-1.18
     repoURL: {{ .Values.repoURL }}
