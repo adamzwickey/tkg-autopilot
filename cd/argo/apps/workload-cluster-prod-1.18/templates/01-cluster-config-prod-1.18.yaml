@@ -301,6 +301,8 @@ spec:
         id: ami-0d5778498d0195ea7
       iamInstanceProfile: nodes.tkg.cloud.vmware.com
       instanceType: t3.xlarge
+      rootVolume:
+        size: 80
       sshKeyName: tkg-tkg-aws-default
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
@@ -315,6 +317,8 @@ spec:
         id: ami-0d5778498d0195ea7
       iamInstanceProfile: nodes.tkg.cloud.vmware.com
       instanceType: t3.xlarge
+      rootVolume:
+        size: 80
       sshKeyName: tkg-tkg-aws-default
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
