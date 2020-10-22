@@ -34,6 +34,6 @@ workload2:
   gitOpsPath: cd/argo/workload2
 tmc:
   clusterGroup: demo
-  token: 12345abcde
+  token: 12345abcde # This must be overridden
           
   
