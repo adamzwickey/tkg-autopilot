@@ -32,4 +32,8 @@ workload2:
   clusterName: aws-workload2
   workersPerPool: "1"
   gitOpsPath: cd/argo/workload2
+tmc:
+  clusterGroup: demo
+  token: 12345abcde
+          
   

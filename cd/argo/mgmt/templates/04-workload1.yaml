@@ -36,5 +36,8 @@ spec:
           value: "{{ .Values.dex.ca }}"
         - name: gitOpsPath
           value: "{{ .Values.workload1.gitOpsPath }}"
-          
+        - name: clusterGroup
+          value: "{{ .Values.tmc.clusterGroup }}"
+        - name: token
+          value: "{{ .Values.tmc.token }}"
           

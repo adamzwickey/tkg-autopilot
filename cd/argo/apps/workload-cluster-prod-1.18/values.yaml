@@ -7,3 +7,5 @@ argoPwd: topsecret
 wlClientSecret1: topsecret
 dexCA: 123123asdasd
 gitOpsPath: /gitops
+clusterGroup: demo
+token: 12345abcde
