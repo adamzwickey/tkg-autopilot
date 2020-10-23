@@ -1,5 +1,5 @@
 # tkg-autopilot
-This project is meant to automate the paving of TKG enfirments, including common extensions, in AWS.  It utilizes TKG, Helm, and ArgoCD utilizing the [App of Apps pattern](https://argoproj.github.io/argo-cd/operator-manual/cluster-bootstrapping/)
+This project is meant to automate the paving of TKG environments, including common extensions, in AWS.  It utilizes TKG, Helm, and ArgoCD utilizing the [App of Apps pattern](https://argoproj.github.io/argo-cd/operator-manual/cluster-bootstrapping/)
 
 
 ![home](https://gitlab.com/azwickey/tkg-autopilot/-/raw/master/img/argo.png "argo")
