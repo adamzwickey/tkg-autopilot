@@ -88,6 +88,12 @@ while kubectl get po -l app.kubernetes.io/name=external-dns | grep Running ; [ $
 	sleep 5s
 done
 
+#setup ClusterIssuer for Argo
+kubectl create secret generic route53-credentials --from-literal=secret-access-key=$AWS_SECRET_ACCESS_KEY -n cert-manager
+yq write manifests/mgmt/cluster-issuer-dns.yaml -i "spec.acme.solvers[0].dns01.route53.region" $(yq r $VARS_YAML aws.region)
+yq write manifests/mgmt/cluster-issuer-dns.yaml -i "spec.acme.solvers[0].dns01.route53.hostedZoneID" $(yq r $VARS_YAML aws.hostedZoneId)
+yq write manifests/mgmt/cluster-issuer-dns.yaml -i "spec.acme.solvers[0].dns01.route53.accessKeyID" $(yq r $VARS_YAML aws.accessKey)
+
 # Install ArgoCD
 kubectl create ns argocd
 helm repo add argo https://argoproj.github.io/argo-helm

@@ -13,5 +13,5 @@ server:
     enabled: true
     domain: argo.mgmt.tanzu.zwickey.net
     issuer:
-      name: letsencrypt-contour-cluster-issuer
+      name: letsencrypt-dns-cluster-issuer
       kind: ClusterIssuer
