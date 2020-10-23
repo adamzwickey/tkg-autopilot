@@ -9,7 +9,7 @@ export AWS_REGION=$(yq r $VARS_YAML aws.region)
 tkg delete cluster $(yq r $VARS_YAML tkg.workload1.name) -y 
 tkg delete cluster $(yq r $VARS_YAML tkg.workload2.name) -y 
 sleep 10
-while tkg get clusters --config config.yaml | grep deleting  ; [ $? -eq 0 ]; do
+while tkg get clusters | grep deleting  ; [ $? -eq 0 ]; do
 	echo Clusters still deleting
 	sleep 5s
 done
