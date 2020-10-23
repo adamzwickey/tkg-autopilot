@@ -93,6 +93,7 @@ kubectl create secret generic route53-credentials --from-literal=secret-access-k
 yq write manifests/mgmt/cluster-issuer-dns.yaml -i "spec.acme.solvers[0].dns01.route53.region" $(yq r $VARS_YAML aws.region)
 yq write manifests/mgmt/cluster-issuer-dns.yaml -i "spec.acme.solvers[0].dns01.route53.hostedZoneID" $(yq r $VARS_YAML aws.hostedZoneId)
 yq write manifests/mgmt/cluster-issuer-dns.yaml -i "spec.acme.solvers[0].dns01.route53.accessKeyID" $(yq r $VARS_YAML aws.accessKey)
+kubectl apply -f manifests/mgmt/cluster-issuer-dns.yaml
 
 # Install ArgoCD
 kubectl create ns argocd
@@ -140,7 +141,7 @@ argocd app create mgmt-app-of-apps \
   --helm-set server=$SERVER \
   --helm-set dex.clientSecret=$(yq r $VARS_YAML tkg.mgmt.dex.oidcSecret) \
   --helm-set dex.wlClientSecret=$(yq r $VARS_YAML tkg.mgmt.dex.wlClientSecret) \
-  --helm-set argo.pwd="$(yq r $VARS_YAML tkg.mgmt.argo.pwd)"
+  --helm-set argo.pwd="$(yq r $VARS_YAML tkg.mgmt.argo.pwd)" \
   --helm-set tmc.token="$(yq r $VARS_YAML tmc.token)"
 
 # We wait for the workload cluster(s) to be added to Argo and then add the secret vars
