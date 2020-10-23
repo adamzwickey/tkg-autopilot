@@ -31,7 +31,7 @@ metadata:
   namespace: default
 spec:
   bastion:
-    enabled: true
+    enabled: false
   networkSpec:
     cni:
       cniIngressRules:
